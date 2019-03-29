@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yashoid.sequencelayout.SequenceLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+
+    android:background="#fff"
+
+    app:pgSize="360"
+    app:sequences="@xml/sequences_main">
+
+    <View
+        android:id="@+id/toolbar_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:elevation="4dp"
+        android:background="#8888f0"/>
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#fff"
+        android:text="Sequence working"
+        android:gravity="center"
+        android:elevation="4dp"/>
+
+    <View
+        android:id="@+id/input1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#b43eac"/>
+
+    <View
+        android:id="@+id/input2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#b43eac"/>
+
+    <View
+        android:id="@+id/input3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#b43eac"/>
+
+    <View
+        android:id="@+id/input4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#b43eac"/>
+
+    <View
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#33ee33"/>
+
+</com.yashoid.sequencelayout.SequenceLayout>

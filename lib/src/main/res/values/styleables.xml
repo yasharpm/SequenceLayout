@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="SequenceLayout">
+        <attr name="sequences" format="reference"/>
+        <attr name="pgSize" format="float"/>
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sequences>
+
+    <Vertical id="main">
+        <Element id="toolbar_back" size="10mm"/>
+        <Space size="4mm"/>
+        <Element id="input1" size="8mm"/>
+        <Space size="2mm"/>
+        <Element id="input2" size="100%input1"/>
+        <Space size="2mm"/>
+        <Element id="input3" size="100%input1"/>
+        <Space size="2mm"/>
+        <Element id="input4" size="100%input1"/>
+        <Space size="1w"/>
+        <Element id="button" size="10mm"/>
+    </Vertical>
+
+    <Vertical id="toolbar_title" start="start@" end="end@toolbar_back">
+        <Space size="1w"/>
+        <Element id="toolbar_title" size="wrap"/>
+        <Space size="1w"/>
+    </Vertical>
+
+    <Horizontal id="toolbar">
+        <Element id="toolbar_back" size="100%"/>
+    </Horizontal>
+
+    <Horizontal id="toolbar_title">
+        <Space size="1w"/>
+        <Element id="toolbar_title" size="wrap"/>
+        <Space size="1w"/>
+    </Horizontal>
+
+    <Horizontal id="input1">
+        <Space size="4mm"/>
+        <Element id="input1" size="1w"/>
+        <Space size="4mm"/>
+    </Horizontal>
+
+    <Horizontal id="input2">
+        <Space size="align@input1"/>
+        <Element id="input2" size="100%input1"/>
+    </Horizontal>
+
+    <Horizontal id="input3">
+        <Space size="align@input1"/>
+        <Element id="input3" size="100%input1"/>
+    </Horizontal>
+
+    <Horizontal id="input4">
+        <Space size="align@input1"/>
+        <Element id="input4" size="100%input1"/>
+    </Horizontal>
+
+    <Horizontal id="button">
+        <Element id="button" size="100%"/>
+    </Horizontal>
+
+</Sequences>
