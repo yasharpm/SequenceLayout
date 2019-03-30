@@ -1,10 +1,10 @@
-package com.yashoid.sequencelayout.temp;
+package com.yashoid.sequencelayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ResolutionBox {
+class ResolutionBox {
 
     private ArrayList<ResolveUnit> mUnits;
 
@@ -27,7 +27,7 @@ public class ResolutionBox {
         }
     }
 
-    public void add(ResolveUnit unit) {
+    void add(ResolveUnit unit) {
         int index = Collections.binarySearch(mUnits, unit);
 
         if (index < 0) {
@@ -37,7 +37,7 @@ public class ResolutionBox {
         }
     }
 
-    public ResolveUnit take(ResolveUnit unit) {
+    ResolveUnit take(ResolveUnit unit) {
         int index = Collections.binarySearch(mUnits, unit);
 
         if (index < 0) {
@@ -47,7 +47,7 @@ public class ResolutionBox {
         return mUnits.remove(index);
     }
 
-    public ResolveUnit take(int elementId, boolean horizontal) {
+    ResolveUnit take(int elementId, boolean horizontal) {
         ResolveUnit lookupUnit = ResolveUnit.obtain(elementId, horizontal, null);
 
         ResolveUnit foundUnit = take(lookupUnit);
@@ -57,7 +57,7 @@ public class ResolutionBox {
         return foundUnit;
     }
 
-    public ResolveUnit find(ResolveUnit unit) {
+    ResolveUnit find(ResolveUnit unit) {
         int index = Collections.binarySearch(mUnits, unit);
 
         if (index >= 0) {
@@ -67,7 +67,7 @@ public class ResolutionBox {
         return null;
     }
 
-    public ResolveUnit find(int elementId, boolean horizontal) {
+    ResolveUnit find(int elementId, boolean horizontal) {
         ResolveUnit lookupUnit = ResolveUnit.obtain(elementId, horizontal, null);
 
         ResolveUnit foundUnit = find(lookupUnit);

@@ -1,4 +1,4 @@
-package com.yashoid.sequencelayout.temp;
+package com.yashoid.sequencelayout;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -42,7 +42,7 @@ public class Sequence {
             }
         }
 
-        protected int resolve(Sequence sequence, int totalSize, ResolutionBox resolvedSizes) {
+        public int resolve(Sequence sequence, int totalSize, ResolutionBox resolvedSizes) {
             if (targetId == 0) {
                 return (int) (totalSize * portion);
             }
@@ -71,7 +71,7 @@ public class Sequence {
 
     private View mView;
 
-    private List<SizeInfo> mSizeInfo = new ArrayList<>();
+    private List<Span> mSpans = new ArrayList<>();
     private SparseIntArray mMeasuredSizes = new SparseIntArray(12);
 
     private SizeResolver mSizeResolver;
@@ -99,12 +99,12 @@ public class Sequence {
         return mIsHorizontal;
     }
 
-    public void addSizeInfo(SizeInfo sizeInfo) {
-        mSizeInfo.add(sizeInfo);
+    public void addSpan(Span span) {
+        mSpans.add(span);
     }
 
-    public List<SizeInfo> getSizeInfo() {
-        return mSizeInfo;
+    public List<Span> getSpans() {
+        return mSpans;
     }
 
     public void setup(View view, PageSizeProvider sizeProvider) {
@@ -124,17 +124,15 @@ public class Sequence {
         int end = mEnd.resolve(this, totalSize, resolvedUnits);
 
         if (start < 0 || end < 0) {
-            for (int index = 0; index < mSizeInfo.size(); index++) {
-                SizeInfo sizeInfo = mSizeInfo.get(index);
+            for (int index = 0; index < mSpans.size(); index++) {
+                Span span = mSpans.get(index);
 
-                if (sizeInfo instanceof Element) {
-                    Element element = (Element) sizeInfo;
-
-                    if (element.isStatic()) {
-                        ResolveUnit unit = unresolvedUnits.take(element.elementId, mIsHorizontal);
+                if (span.elementId != 0) {
+                    if (span.isStatic()) {
+                        ResolveUnit unit = unresolvedUnits.take(span.elementId, mIsHorizontal);
 
                         if (unit != null) {
-                            unit.setSize(mSizeResolver.resolveSize(element, mIsHorizontal));
+                            unit.setSize(mSizeResolver.resolveSize(span, mIsHorizontal));
 
                             resolvedUnits.add(unit);
                         }
@@ -162,8 +160,8 @@ public class Sequence {
         boolean hasUnresolvedSizes = false;
         boolean hasEncounteredPositionResolutionGap = false;
 
-        for (int index = 0; index < mSizeInfo.size(); index++) {
-            SizeInfo sizeInfo = mSizeInfo.get(index);
+        for (int index = 0; index < mSpans.size(); index++) {
+            SizeInfo sizeInfo = mSpans.get(index);
 
             if (sizeInfo.metric != SizeInfo.METRIC_WEIGHT) {
                 int size = mSizeResolver.resolveSize(sizeInfo, mIsHorizontal);
@@ -224,8 +222,8 @@ public class Sequence {
 
             currentPosition = start;
 
-            for (int index = 0; index < mSizeInfo.size(); index++) {
-                SizeInfo sizeInfo = mSizeInfo.get(index);
+            for (int index = 0; index < mSpans.size(); index++) {
+                SizeInfo sizeInfo = mSpans.get(index);
 
                 int size = mMeasuredSizes.get(index, -1);
 
@@ -236,11 +234,11 @@ public class Sequence {
                     else {
                         size = 0;
 
-                        if (sizeInfo instanceof Space) {
-                            Space space = (Space) sizeInfo;
+                        if (sizeInfo instanceof Span) {
+                            Span span = (Span) sizeInfo;
 
-                            if (space.min != null) {
-                                size = mSizeResolver.resolveSize(space.min, mIsHorizontal);
+                            if (span.min != null) {
+                                size = mSizeResolver.resolveSize(span.min, mIsHorizontal);
                             }
 
                             if (size < 0) {

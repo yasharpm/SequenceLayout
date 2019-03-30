@@ -1,10 +1,8 @@
-package com.yashoid.sequencelayout.temp;
-
-import android.support.v4.util.Pools;
+package com.yashoid.sequencelayout;
 
 import java.util.ArrayList;
 
-public class ExpandingPool<T> implements Pools.Pool<T> {
+public class ExpandingPool<T> {
 
     public interface InstanceCreator<T> {
 
@@ -32,7 +30,6 @@ public class ExpandingPool<T> implements Pools.Pool<T> {
         }
     }
 
-    @Override
     public T acquire() {
         if (mInstances.size() == 0) {
             return mInstanceCreator.newInstance();
@@ -41,7 +38,6 @@ public class ExpandingPool<T> implements Pools.Pool<T> {
         return mInstances.remove(mInstances.size() - 1);
     }
 
-    @Override
     public boolean release(T instance) {
         if (!mCanOverGrow && mInstances.size() >= mSize) {
             return false;

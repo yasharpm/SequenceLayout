@@ -1,19 +1,19 @@
-package com.yashoid.sequencelayout.temp;
+package com.yashoid.sequencelayout;
 
 import android.view.View;
-
-import com.yashoid.sequencelayout.SequenceLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public class PageResolver implements PageSizeProvider {
+class PageResolver implements PageSizeProvider {
 
-    private SequenceLayout mView;
-    private float mPgSize;
+    private final SequenceLayout mView;
+    private final float mPgSize;
 
     private List<Sequence> mSequences = new ArrayList<>();
+
+    private int mResolvingWidth;
 
     private List<Sequence> mUnresolvedSequences = new ArrayList<>();
 
@@ -23,7 +23,7 @@ public class PageResolver implements PageSizeProvider {
     private int mResolvedWidth = -1;
     private int mResolvedHeight = -1;
 
-    public PageResolver(SequenceLayout view) {
+    PageResolver(SequenceLayout view) {
         mView = view;
 
         mPgSize = mView.getPgSize();
@@ -34,8 +34,6 @@ public class PageResolver implements PageSizeProvider {
         return mPgSize;
     }
 
-    private int mResolvingWidth; // TODO Dirty much!
-
     @Override
     public float getPgUnitSize() {
         if (mPgSize == 0) {
@@ -45,38 +43,28 @@ public class PageResolver implements PageSizeProvider {
         return mResolvingWidth / mPgSize;
     }
 
-    public void reset() {
-        mUnresolvedSequences.clear();
-
-        mResolvedUnits.passUnits(mUnresolvedUnits);
-        mUnresolvedUnits.resetUnits();
-
-        mResolvedWidth = -1;
-        mResolvedHeight = -1;
-    }
-
-    public void onSequenceAdded(Sequence sequence) {
+    void onSequenceAdded(Sequence sequence) {
         sequence.setup(mView, this);
 
         mSequences.add(sequence);
 
         final boolean horizontal = sequence.isHorizontal();
-        List<SizeInfo> sizeInfo = sequence.getSizeInfo();
+        List<Span> span = sequence.getSpans();
 
-        for (SizeInfo size: sizeInfo) {
+        for (Span size: span) {
             if (size.elementId != 0) {
                 mUnresolvedUnits.add(ResolveUnit.obtain(size.elementId, horizontal, size));
             }
         }
     }
 
-    protected void onSequenceRemoved(Sequence sequence) {
+    void onSequenceRemoved(Sequence sequence) {
         mSequences.remove(sequence);
 
         final boolean horizontal = sequence.isHorizontal();
-        List<SizeInfo> sizeInfo = sequence.getSizeInfo();
+        List<Span> span = sequence.getSpans();
 
-        for (SizeInfo size: sizeInfo) {
+        for (SizeInfo size: span) {
             if (size.elementId != 0) {
                 ResolveUnit unit = mUnresolvedUnits.take(size.elementId, horizontal);
 
@@ -93,9 +81,13 @@ public class PageResolver implements PageSizeProvider {
         }
     }
 
-    public void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
+    void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
         mResolvingWidth = pageWidth;
 
+        mResolvedUnits.passUnits(mUnresolvedUnits);
+        mUnresolvedUnits.resetUnits();
+
+        mUnresolvedSequences.clear();
         mUnresolvedSequences.addAll(mSequences);
 
         int maxWidth = -1;
@@ -126,7 +118,7 @@ public class PageResolver implements PageSizeProvider {
         mResolvedHeight = maxHeight;
     }
 
-    public void layoutViews() {
+    void layoutViews() { // TODO Improve for real!
         for (ResolveUnit unit: mResolvedUnits.getUnits()) {
             View child = mView.findViewById(unit.getElementId());
 
@@ -143,11 +135,11 @@ public class PageResolver implements PageSizeProvider {
         }
     }
 
-    public int getResolvedWidth() {
+    int getResolvedWidth() {
         return mResolvedWidth;
     }
 
-    public int getResolvedHeight() {
+    int getResolvedHeight() {
         return mResolvedHeight;
     }
 

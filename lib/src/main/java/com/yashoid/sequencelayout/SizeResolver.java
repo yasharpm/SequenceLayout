@@ -1,4 +1,4 @@
-package com.yashoid.sequencelayout.temp;
+package com.yashoid.sequencelayout;
 
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -60,23 +60,22 @@ public class SizeResolver {
     }
 
     public int resolveSize(SizeInfo sizeInfo, boolean isHorizontal) {
-//        if (sizeInfo.elementId != null) {
-//            PageResolver.ResolveUnitImplementation unit = mResolvedSizes.find(sizeInfo.elementId, isHorizontal);
-//
-//            if (unit != null) {
-//                return unit.getSize();
-//            }
-//        }
+        if (sizeInfo.elementId != 0) {
+            ResolveUnit unit = mResolvedSizes.find(sizeInfo.elementId, isHorizontal);
 
-        View view = mView.findViewById(sizeInfo.elementId);
+            if (unit != null) {
+                return unit.getSize();
+            }
+        }
 
-        if (sizeInfo instanceof Element) {
+        View view = sizeInfo.elementId == 0 ? null : mView.findViewById(sizeInfo.elementId);
+
+        if (sizeInfo instanceof Span) {
             if (view != null && view.getVisibility() == View.GONE) {
                 return 0;
             }
-        }
-        else if (sizeInfo instanceof Space) {
-            int visibilityElement = ((Space) sizeInfo).visibilityElement;
+
+            int visibilityElement = ((Span) sizeInfo).visibilityElement;
 
             if (visibilityElement != 0) {
                 view = mView.findViewById(visibilityElement);
@@ -92,7 +91,6 @@ public class SizeResolver {
             case SizeInfo.METRIC_MM:
             case SizeInfo.METRIC_PG:
             case SizeInfo.METRIC_RATIO:
-            case SizeInfo.METRIC_MATCH_PARENT:
                 return sizeInfo.measureStaticSize(mTotalSize, mMetrics, mPageSizeProvider.getPgUnitSize());
             case SizeInfo.METRIC_ELEMENT_RATIO:
                 ResolveUnit ratioUnit = mResolvedSizes.find(sizeInfo.relatedElementId, isHorizontal);
@@ -145,15 +143,15 @@ public class SizeResolver {
                     int minSelf = 0;
                     int maxSelf = -1;
 
-                    if (sizeInfo instanceof Space) {
-                        Space space = (Space) sizeInfo;
+                    if (sizeInfo instanceof Span) {
+                        Span span = (Span) sizeInfo;
 
-                        if (space.min != null) {
-                            minSelf = resolveSize(space.min, isHorizontal);
+                        if (span.min != null) {
+                            minSelf = resolveSize(span.min, isHorizontal);
                         }
 
-                        if (space.max != null) {
-                            maxSelf = resolveSize(space.max, isHorizontal);
+                        if (span.max != null) {
+                            maxSelf = resolveSize(span.max, isHorizontal);
                         }
                     }
 
@@ -174,30 +172,30 @@ public class SizeResolver {
                     int minSelf = 0;
                     int maxSelf = -1;
 
-                    if (sizeInfo instanceof Space) {
-                        Space space = (Space) sizeInfo;
+                    if (sizeInfo instanceof Span) {
+                        Span span = (Span) sizeInfo;
 
-                        if (space.min != null) {
-                            minSelf = resolveSize(space.min, isHorizontal);
+                        if (span.min != null) {
+                            minSelf = resolveSize(span.min, isHorizontal);
                         }
 
-                        if (space.max != null) {
-                            maxSelf = resolveSize(space.max, isHorizontal);
+                        if (span.max != null) {
+                            maxSelf = resolveSize(span.max, isHorizontal);
                         }
                     }
 
                     int minOther = 0;
                     int maxOther = -1;
 
-                    if (otherDirection.getSizeInfo() != null && otherDirection.getSizeInfo() instanceof Space) {
-                        Space space = (Space) otherDirection.getSizeInfo();
+                    if (otherDirection.getSpan() != null) {
+                        Span span = otherDirection.getSpan();
 
-                        if (space.min != null) {
-                            minOther = resolveSize(space.min, !isHorizontal);
+                        if (span.min != null) {
+                            minOther = resolveSize(span.min, !isHorizontal);
                         }
 
-                        if (space.max != null) {
-                            maxOther = resolveSize(space.max, !isHorizontal);
+                        if (span.max != null) {
+                            maxOther = resolveSize(span.max, !isHorizontal);
                         }
                     }
 

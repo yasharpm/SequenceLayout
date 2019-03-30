@@ -1,4 +1,4 @@
-package com.yashoid.sequencelayout.temp;
+package com.yashoid.sequencelayout;
 
 public interface PageSizeProvider {
 

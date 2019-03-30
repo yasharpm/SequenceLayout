@@ -4,11 +4,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.content.res.XmlResourceParser;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.ViewGroup;
-
-import com.yashoid.sequencelayout.temp.PageResolver;
-import com.yashoid.sequencelayout.temp.SequenceReader;
-import com.yashoid.sequencelayout.temp.Sequence;
 
 import java.util.List;
 
@@ -70,10 +67,25 @@ public class SequenceLayout extends ViewGroup {
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
-        mPageResolver.reset();
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+
+        widthSize = getSize(widthMode, widthSize, dm.widthPixels);
+        heightSize = getSize(heightMode, heightSize, dm.heightPixels);
+
         mPageResolver.startResolution(widthSize, heightSize, widthMode == MeasureSpec.UNSPECIFIED, heightMode == MeasureSpec.UNSPECIFIED);
 
         setMeasuredDimension(mPageResolver.getResolvedWidth(), mPageResolver.getResolvedHeight());
+    }
+
+    private int getSize(int mode, int size, int maxSize) {
+        switch (mode) {
+            case MeasureSpec.EXACTLY:
+            case MeasureSpec.AT_MOST:
+                return size;
+            case MeasureSpec.UNSPECIFIED:
+            default:
+                return size > 0 ? size : maxSize;
+        }
     }
 
     @Override

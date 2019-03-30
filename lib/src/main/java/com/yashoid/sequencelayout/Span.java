@@ -1,11 +1,12 @@
-package com.yashoid.sequencelayout.temp;
+package com.yashoid.sequencelayout;
 
 import android.content.Context;
 
 import org.xmlpull.v1.XmlPullParser;
 
-public class Space extends SizeInfo {
+public class Span extends SizeInfo {
 
+    private static final String ID = "id";
     private static final String SIZE = "size";
     private static final String MIN = "min";
     private static final String MAX = "max";
@@ -16,13 +17,16 @@ public class Space extends SizeInfo {
 
     public int visibilityElement = 0;
 
-    Space(XmlPullParser parser, Context context) {
+    Span(XmlPullParser parser, Context context) {
         final int attrCount = parser.getAttributeCount();
 
         for (int i = 0; i < attrCount; i++) {
             String name = parser.getAttributeName(i);
 
             switch (name) {
+                case ID:
+                    elementId = resolveViewId(parser.getAttributeValue(i), context);
+                    continue;
                 case SIZE:
                     readSizeInfo(parser.getAttributeValue(i), this, context);
                     continue;
@@ -48,13 +52,20 @@ public class Space extends SizeInfo {
                     visibilityElement = resolveViewId(parser.getAttributeValue(i), context);
                     continue;
                 default:
-                    readAttribute(name, parser.getAttributeValue(i), context);
                     continue;
             }
         }
+
+        if (min != null) {
+            min.elementId = elementId;
+        }
+
+        if (max != null) {
+            max.elementId = elementId;
+        }
     }
 
-    protected void readAttribute(String name, String value, Context context) {
+    public Span() {
 
     }
 

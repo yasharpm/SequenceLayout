@@ -1,7 +1,6 @@
-package com.yashoid.sequencelayout.temp;
+package com.yashoid.sequencelayout;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
@@ -22,7 +21,7 @@ public class SizeInfo {
     // Wrapping metric
     public static final int METRIC_WRAP = 7;
 
-    // Others known metrics
+    // Weighted metric
     public static final int METRIC_WEIGHT = 8;
 
     private static final String M_WEIGHT = "w";

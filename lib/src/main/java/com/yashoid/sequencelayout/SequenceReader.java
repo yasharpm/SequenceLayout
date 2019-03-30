@@ -1,4 +1,4 @@
-package com.yashoid.sequencelayout.temp;
+package com.yashoid.sequencelayout;
 
 import android.content.Context;
 
@@ -21,8 +21,7 @@ public class SequenceReader {
     private static final String SEQUENCE_START = "start";
     private static final String SEQUENCE_END = "end";
 
-    private static final String SPACE = "Space";
-    private static final String ELEMENT = "Element";
+    private static final String SPAN = "Span";
 
     private Context mContext;
 
@@ -91,15 +90,10 @@ public class SequenceReader {
 
             String name = parser.getName();
 
-            if (SPACE.equals(name)) {
-                Space space = new Space(parser, mContext);
+            if (SPAN.equals(name)) {
+                Span span = new Span(parser, mContext);
 
-                sequence.addSizeInfo(space);
-            }
-            else if (ELEMENT.equals(name)) {
-                Element element = new Element(parser, mContext);
-
-                sequence.addSizeInfo(element);
+                sequence.addSpan(span);
             }
 
             skip(parser);

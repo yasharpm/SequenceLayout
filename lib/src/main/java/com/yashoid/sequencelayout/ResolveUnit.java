@@ -1,6 +1,6 @@
-package com.yashoid.sequencelayout.temp;
+package com.yashoid.sequencelayout;
 
-public class ResolveUnit implements Comparable<ResolveUnit> {
+class ResolveUnit implements Comparable<ResolveUnit> {
 
     private static ExpandingPool<ResolveUnit> mPool = new ExpandingPool<>(100, new ExpandingPool.InstanceCreator<ResolveUnit>() {
 
@@ -11,21 +11,21 @@ public class ResolveUnit implements Comparable<ResolveUnit> {
 
     }, true, true);
 
-    public static ResolveUnit obtain(int elementId, boolean horizontal, SizeInfo sizeInfo) {
+    static ResolveUnit obtain(int elementId, boolean horizontal, Span span) {
         ResolveUnit unit = mPool.acquire();
 
         unit.reset();
 
         unit.elementId = elementId;
         unit.horizontal = horizontal;
-        unit.sizeInfo = sizeInfo;
+        unit.span = span;
 
         return unit;
     }
 
     private int elementId;
     private boolean horizontal;
-    private SizeInfo sizeInfo;
+    private Span span;
 
     private boolean isWrappingKnown = false;
     private boolean isWrapping;
@@ -41,7 +41,7 @@ public class ResolveUnit implements Comparable<ResolveUnit> {
 
     private void reset() {
         elementId = 0;
-        sizeInfo = null;
+        span = null;
 
         isWrappingKnown = false;
 
@@ -51,60 +51,60 @@ public class ResolveUnit implements Comparable<ResolveUnit> {
         end = -1;
     }
 
-    public int getElementId() {
+    int getElementId() {
         return elementId;
     }
 
-    public boolean isHorizontal() {
+    boolean isHorizontal() {
         return horizontal;
     }
 
-    public SizeInfo getSizeInfo() {
-        return sizeInfo;
+    Span getSpan() {
+        return span;
     }
 
-    public void setWrapping(boolean wrapping) {
+    void setWrapping(boolean wrapping) {
         isWrappingKnown = true;
         isWrapping = wrapping;
     }
 
-    public boolean isWrappingKnown() {
+    boolean isWrappingKnown() {
         return isWrappingKnown;
     }
 
-    public boolean isWrapping() {
+    boolean isWrapping() {
         return isWrapping;
     }
 
-    public void setSize(int size) {
+    void setSize(int size) {
         this.size = size;
     }
 
-    public boolean isSizeSet() {
+    boolean isSizeSet() {
         return size != -1;
     }
 
-    public int getSize() {
+    int getSize() {
         return size;
     }
 
-    public void setStart(int start) {
+    void setStart(int start) {
         this.start = start;
     }
 
-    public void setEnd(int end) {
+    void setEnd(int end) {
         this.end = end;
     }
 
-    public int getStart() {
+    int getStart() {
         return start;
     }
 
-    public int getEnd() {
+    int getEnd() {
         return end;
     }
 
-    public boolean isPositionSet() {
+    boolean isPositionSet() {
         return start != -1 && end != -1;
     }
 
@@ -139,7 +139,7 @@ public class ResolveUnit implements Comparable<ResolveUnit> {
         return elementId - o.getElementId();
     }
 
-    protected void release() {
+    void release() {
         reset();
 
         mPool.release(this);
@@ -147,7 +147,7 @@ public class ResolveUnit implements Comparable<ResolveUnit> {
 
     @Override
     public String toString() {
-        return (horizontal ? "h" : "v") + " " + elementId + " " + (size >= 0 ? "" + size : "?") + " sizeInfo:" + sizeInfo;
+        return (horizontal ? "h" : "v") + " " + elementId + " " + (size >= 0 ? "" + size : "?") + " span:" + span;
     }
 
 }
