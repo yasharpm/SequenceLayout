@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-class PageResolver implements PageSizeProvider {
+class PageResolver implements SizeResolverHost {
 
     private final SequenceLayout mView;
     private final float mPgSize;
@@ -14,6 +14,7 @@ class PageResolver implements PageSizeProvider {
     private List<Sequence> mSequences = new ArrayList<>();
 
     private int mResolvingWidth;
+    private int mResolvingHeight;
 
     private List<Sequence> mUnresolvedSequences = new ArrayList<>();
 
@@ -43,9 +44,12 @@ class PageResolver implements PageSizeProvider {
         return mResolvingWidth / mPgSize;
     }
 
-    void onSequenceAdded(Sequence sequence) {
-        sequence.setup(mView, this);
+    @Override
+    public float getScreenDensity() {
+        return mView.getResources().getDisplayMetrics().density;
+    }
 
+    void onSequenceAdded(Sequence sequence) {
         mSequences.add(sequence);
 
         final boolean horizontal = sequence.isHorizontal();
@@ -83,6 +87,7 @@ class PageResolver implements PageSizeProvider {
 
     void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
         mResolvingWidth = pageWidth;
+        mResolvingHeight = pageHeight;
 
         mResolvedUnits.passUnits(mUnresolvedUnits);
         mUnresolvedUnits.resetUnits();
@@ -99,7 +104,7 @@ class PageResolver implements PageSizeProvider {
             while (iterator.hasNext()) {
                 Sequence sequence = iterator.next();
 
-                int size = sequence.resolve(mResolvedUnits, mUnresolvedUnits, pageWidth, pageHeight, sequence.isHorizontal() ? horizontalWrapping : verticalWrapping);
+                int size = sequence.resolve(this, sequence.isHorizontal() ? horizontalWrapping : verticalWrapping);
 
                 if (size != -1) {
                     if (sequence.isHorizontal()) {
@@ -141,6 +146,31 @@ class PageResolver implements PageSizeProvider {
 
     int getResolvedHeight() {
         return mResolvedHeight;
+    }
+
+    @Override
+    public View findViewById(int id) {
+        return mView.findViewById(id);
+    }
+
+    @Override
+    public ResolutionBox getResolvedUnits() {
+        return mResolvedUnits;
+    }
+
+    @Override
+    public ResolutionBox getUnresolvedUnits() {
+        return mUnresolvedUnits;
+    }
+
+    @Override
+    public int getResolvingWidth() {
+        return mResolvingWidth;
+    }
+
+    @Override
+    public int getResolvingHeight() {
+        return mResolvingHeight;
     }
 
 }

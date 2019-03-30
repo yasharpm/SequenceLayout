@@ -69,8 +69,6 @@ public class Sequence {
     private SequenceEdge mStart;
     private SequenceEdge mEnd;
 
-    private View mView;
-
     private List<Span> mSpans = new ArrayList<>();
     private SparseIntArray mMeasuredSizes = new SparseIntArray(12);
 
@@ -107,18 +105,13 @@ public class Sequence {
         return mSpans;
     }
 
-    public void setup(View view, PageSizeProvider sizeProvider) {
-        mView = view;
+    public int resolve(SizeResolverHost host, boolean wrapping) {
+        mSizeResolver.setHost(host);
 
-        mSizeResolver.setup(view, Resources.getSystem().getDisplayMetrics(), sizeProvider);
-    }
+        int totalSize = mIsHorizontal ? host.getResolvingWidth() : host.getResolvingHeight();
 
-    protected View getView() {
-        return mView;
-    }
-
-    public int resolve(ResolutionBox resolvedUnits, ResolutionBox unresolvedUnits, int maxWidth, int maxHeight, boolean wrapping) {
-        int totalSize = mIsHorizontal ? maxWidth : maxHeight;
+        final ResolutionBox resolvedUnits = host.getResolvedUnits();
+        final ResolutionBox unresolvedUnits = host.getUnresolvedUnits();
 
         int start = mStart.resolve(this, totalSize, resolvedUnits);
         int end = mEnd.resolve(this, totalSize, resolvedUnits);
@@ -154,8 +147,6 @@ public class Sequence {
         int currentPosition = start;
 
         mMeasuredSizes.clear();
-
-        mSizeResolver.setResolutionInfo(resolvedUnits, unresolvedUnits, totalSize, maxWidth, maxHeight);
 
         boolean hasUnresolvedSizes = false;
         boolean hasEncounteredPositionResolutionGap = false;

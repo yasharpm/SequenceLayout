@@ -113,14 +113,14 @@ public class SizeInfo {
         return metric == METRIC_ELEMENT_RATIO || metric == METRIC_ALIGN;
     }
 
-    public int measureStaticSize(int totalSize, DisplayMetrics displayMetrics, float pgUnitSize) {
+    public int measureStaticSize(int totalSize, PageSizeProvider pageSizeProvider) {
         switch (metric) {
             case METRIC_PX:
                 return (int) size;
             case METRIC_MM:
-                return (int) (size * displayMetrics.density * MM_TO_PX_RATIO);
+                return (int) (size * pageSizeProvider.getScreenDensity() * MM_TO_PX_RATIO);
             case METRIC_PG:
-                return (int) (size * pgUnitSize);
+                return (int) (size * pageSizeProvider.getPgUnitSize());
             case METRIC_RATIO:
                 return (int) (size * totalSize);
         }
