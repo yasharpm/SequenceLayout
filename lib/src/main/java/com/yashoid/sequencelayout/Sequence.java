@@ -1,9 +1,7 @@
 package com.yashoid.sequencelayout;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.SparseIntArray;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,12 +40,12 @@ public class Sequence {
             }
         }
 
-        public int resolve(Sequence sequence, int totalSize, ResolutionBox resolvedSizes) {
+        public int resolve(Sequence sequence, int totalSize, List<Span> resolvedSizes) {
             if (targetId == 0) {
                 return (int) (totalSize * portion);
             }
 
-            ResolveUnit resolveUnit = resolvedSizes.find(targetId, sequence.mIsHorizontal);
+            Span resolveUnit = SpanUtil.find(targetId, sequence.mIsHorizontal, resolvedSizes);
 
             if (resolveUnit == null) {
                 return -1;
@@ -110,8 +108,8 @@ public class Sequence {
 
         int totalSize = mIsHorizontal ? host.getResolvingWidth() : host.getResolvingHeight();
 
-        final ResolutionBox resolvedUnits = host.getResolvedUnits();
-        final ResolutionBox unresolvedUnits = host.getUnresolvedUnits();
+        final List<Span> resolvedUnits = host.getResolvedUnits();
+        final List<Span> unresolvedUnits = host.getUnresolvedUnits();
 
         int start = mStart.resolve(this, totalSize, resolvedUnits);
         int end = mEnd.resolve(this, totalSize, resolvedUnits);
@@ -122,13 +120,11 @@ public class Sequence {
 
                 if (span.elementId != 0) {
                     if (span.isStatic()) {
-                        ResolveUnit unit = unresolvedUnits.take(span.elementId, mIsHorizontal);
+                        unresolvedUnits.remove(span);
 
-                        if (unit != null) {
-                            unit.setSize(mSizeResolver.resolveSize(span, mIsHorizontal));
+                        span.setSize(mSizeResolver.resolveSize(span, mIsHorizontal));
 
-                            resolvedUnits.add(unit);
-                        }
+                        resolvedUnits.add(span);
                     }
                 }
             }
@@ -154,7 +150,7 @@ public class Sequence {
         boolean hasEncounteredPositionResolutionGap = false;
 
         for (int index = 0; index < mSpans.size(); index++) {
-            SizeInfo sizeInfo = mSpans.get(index);
+            Span sizeInfo = mSpans.get(index);
 
             if (sizeInfo.metric != SizeInfo.METRIC_WEIGHT) {
                 int size = mSizeResolver.resolveSize(sizeInfo, mIsHorizontal);
@@ -165,23 +161,19 @@ public class Sequence {
 
                     mSizeResolver.setCurrentPosition(calculatedSize);
 
-                    ResolveUnit unit = null;
-
                     if (sizeInfo.elementId != 0) {
-                        unit = unresolvedUnits.take(sizeInfo.elementId, mIsHorizontal);
+                        unresolvedUnits.remove(sizeInfo);
 
-                        if (unit != null) {
-                            unit.setSize(size);
+                        if (sizeInfo != null) {
+                            sizeInfo.setSize(size);
 
-                            resolvedUnits.add(unit);
+                            resolvedUnits.add(sizeInfo);
                         }
                     }
 
                     if (!hasEncounteredPositionResolutionGap) {
-                        if (unit != null) {
-                            unit.setStart(currentPosition);
-                            unit.setEnd(currentPosition + size);
-                        }
+                        sizeInfo.setStart(currentPosition);
+                        sizeInfo.setEnd(currentPosition + size);
 
                         currentPosition += size;
                     }
@@ -216,7 +208,7 @@ public class Sequence {
             currentPosition = start;
 
             for (int index = 0; index < mSpans.size(); index++) {
-                SizeInfo sizeInfo = mSpans.get(index);
+                Span sizeInfo = mSpans.get(index);
 
                 int size = mMeasuredSizes.get(index, -1);
 
@@ -247,19 +239,13 @@ public class Sequence {
                 }
 
                 if (sizeInfo.elementId != 0) {
-                    ResolveUnit unit = unresolvedUnits.take(sizeInfo.elementId, mIsHorizontal);
+                    unresolvedUnits.remove(sizeInfo);
 
-                    if (unit == null) {
-                        unit = resolvedUnits.find(sizeInfo.elementId, mIsHorizontal);
-                    }
+                    sizeInfo.setSize(size);
+                    sizeInfo.setStart(currentPosition);
+                    sizeInfo.setEnd(currentPosition + size);
 
-                    if (unit != null) {
-                        unit.setSize(size);
-                        unit.setStart(currentPosition);
-                        unit.setEnd(currentPosition + size);
-
-                        resolvedUnits.add(unit);
-                    }
+                    resolvedUnits.add(sizeInfo);
                 }
 
                 currentPosition += size;

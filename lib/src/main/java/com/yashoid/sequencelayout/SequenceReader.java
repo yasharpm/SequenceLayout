@@ -91,7 +91,7 @@ public class SequenceReader {
             String name = parser.getName();
 
             if (SPAN.equals(name)) {
-                Span span = new Span(parser, mContext);
+                Span span = new Span(parser, horizontal, mContext);
 
                 sequence.addSpan(span);
             }

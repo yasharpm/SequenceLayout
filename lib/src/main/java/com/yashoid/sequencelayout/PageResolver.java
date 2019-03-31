@@ -18,8 +18,8 @@ class PageResolver implements SizeResolverHost {
 
     private List<Sequence> mUnresolvedSequences = new ArrayList<>();
 
-    private ResolutionBox mUnresolvedUnits = new ResolutionBox();
-    private ResolutionBox mResolvedUnits = new ResolutionBox();
+    private List<Span> mUnresolvedUnits = new ArrayList<>();
+    private List<Span> mResolvedUnits = new ArrayList<>();
 
     private int mResolvedWidth = -1;
     private int mResolvedHeight = -1;
@@ -52,45 +52,22 @@ class PageResolver implements SizeResolverHost {
     void onSequenceAdded(Sequence sequence) {
         mSequences.add(sequence);
 
-        final boolean horizontal = sequence.isHorizontal();
-        List<Span> span = sequence.getSpans();
-
-        for (Span size: span) {
-            if (size.elementId != 0) {
-                mUnresolvedUnits.add(ResolveUnit.obtain(size.elementId, horizontal, size));
-            }
-        }
+        mUnresolvedUnits.addAll(sequence.getSpans());
     }
 
     void onSequenceRemoved(Sequence sequence) {
         mSequences.remove(sequence);
 
-        final boolean horizontal = sequence.isHorizontal();
-        List<Span> span = sequence.getSpans();
-
-        for (SizeInfo size: span) {
-            if (size.elementId != 0) {
-                ResolveUnit unit = mUnresolvedUnits.take(size.elementId, horizontal);
-
-                if (unit != null) {
-                    unit.release();
-                }
-
-                unit = mResolvedUnits.take(size.elementId, horizontal);
-
-                if (unit != null) {
-                    unit.release();
-                }
-            }
-        }
+        mResolvedUnits.removeAll(sequence.getSpans());
+        mUnresolvedUnits.removeAll(sequence.getSpans());
     }
 
     void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
         mResolvingWidth = pageWidth;
         mResolvingHeight = pageHeight;
 
-        mResolvedUnits.passUnits(mUnresolvedUnits);
-        mUnresolvedUnits.resetUnits();
+        mUnresolvedUnits.addAll(mResolvedUnits);
+        mResolvedUnits.clear();
 
         mUnresolvedSequences.clear();
         mUnresolvedSequences.addAll(mSequences);
@@ -124,10 +101,10 @@ class PageResolver implements SizeResolverHost {
     }
 
     void layoutViews() { // TODO Improve for real!
-        for (ResolveUnit unit: mResolvedUnits.getUnits()) {
-            View child = mView.findViewById(unit.getElementId());
+        for (Span unit: mResolvedUnits) {
+            View child = mView.findViewById(unit.elementId);
 
-            if (unit.isHorizontal()) {
+            if (unit.isHorizontal) {
                 child.layout(unit.getStart(), child.getTop(), unit.getEnd(), child.getBottom());
             }
             else {
@@ -154,12 +131,12 @@ class PageResolver implements SizeResolverHost {
     }
 
     @Override
-    public ResolutionBox getResolvedUnits() {
+    public List<Span> getResolvedUnits() {
         return mResolvedUnits;
     }
 
     @Override
-    public ResolutionBox getUnresolvedUnits() {
+    public List<Span> getUnresolvedUnits() {
         return mUnresolvedUnits;
     }
 

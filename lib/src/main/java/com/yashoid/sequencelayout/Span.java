@@ -12,12 +12,20 @@ public class Span extends SizeInfo {
     private static final String MAX = "max";
     private static final String VISIBILITY_ELEMENT = "visibilityElement";
 
+    public boolean isHorizontal;
+
     public SizeInfo min = null;
     public SizeInfo max = null;
 
     public int visibilityElement = 0;
 
-    Span(XmlPullParser parser, Context context) {
+    public int size = -1;
+    public int start = -1;
+    public int end = -1;
+
+    Span(XmlPullParser parser, boolean isHorizontal, Context context) {
+        this.isHorizontal = isHorizontal;
+
         final int attrCount = parser.getAttributeCount();
 
         for (int i = 0; i < attrCount; i++) {
@@ -67,6 +75,57 @@ public class Span extends SizeInfo {
 
     public Span() {
 
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getSize() {
+        return size;
+    }
+    public boolean isSizeSet() {
+        return size != -1;
+    }
+
+    public int getStart() {
+        return start;
+    }
+
+    public int getEnd() {
+        return end;
+    }
+
+    public boolean isPositionSet() {
+        return start != -1 && end != -1;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
+    }
+
+    public void setEnd(int end) {
+        this.end = end;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof Span)) {
+            return false;
+        }
+
+        Span span = (Span) obj;
+
+        if (elementId != 0 && span.elementId != 0) {
+            return span.elementId == elementId && span.isHorizontal == isHorizontal;
+        }
+        else {
+            return this == obj;
+        }
     }
 
 }
