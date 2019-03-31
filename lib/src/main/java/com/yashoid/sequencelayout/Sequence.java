@@ -142,6 +142,8 @@ public class Sequence {
 
         totalSize = end - start;
 
+        mSizeResolver.setResolutionInfo(totalSize);
+
         float weightSum = 0;
         int calculatedSize = 0;
         int currentPosition = start;
