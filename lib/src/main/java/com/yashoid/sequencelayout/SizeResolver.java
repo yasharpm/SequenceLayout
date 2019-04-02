@@ -10,11 +10,6 @@ public class SizeResolver {
 
     private SizeResolverHost mHost;
 
-    private int mTotalSize;
-
-    private boolean mHasEncounteredPositionResolutionGap;
-    private int mCurrentPosition;
-
     public SizeResolver() {
 
     }
@@ -23,34 +18,9 @@ public class SizeResolver {
         mHost = host;
     }
 
-    public void setResolutionInfo(int totalSize) {
-        mTotalSize = totalSize;
-    }
-
-    public void setHasEncounteredPositionResolutionGap(boolean hasGap) {
-        mHasEncounteredPositionResolutionGap = hasGap;
-    }
-
-    public void setCurrentPosition(int position) {
-        mCurrentPosition = position;
-    }
-
-    public void reset() {
-        mHasEncounteredPositionResolutionGap = false;
-        mCurrentPosition = 0;
-    }
-
-    public int resolveSize(SizeInfo sizeInfo, boolean isHorizontal) {
-        final List<Span> resolvedUnits = mHost.getResolvedUnits();
-        final List<Span> unresolvedUnits = mHost.getUnresolvedUnits();
-
-//        if (sizeInfo.elementId != 0) {
-//            Span unit = SpanUtil.find(sizeInfo.elementId, isHorizontal, resolvedUnits);
-//
-//            if (unit != null) {
-//                return unit.getSize();
-//            }
-//        }
+    public int resolveSize(SizeInfo sizeInfo, boolean isHorizontal, int totalSize) {
+        final List<Span> resolvedSpans = mHost.getResolvedSpans();
+        final List<Span> unresolvedSpans = mHost.getUnresolvedSpans();
 
         View view = sizeInfo.elementId == 0 ? null : mHost.findViewById(sizeInfo.elementId);
 
@@ -75,22 +45,12 @@ public class SizeResolver {
             case SizeInfo.METRIC_MM:
             case SizeInfo.METRIC_PG:
             case SizeInfo.METRIC_RATIO:
-                return sizeInfo.measureStaticSize(mTotalSize, mHost);
+                return sizeInfo.measureStaticSize(totalSize, mHost);
             case SizeInfo.METRIC_ELEMENT_RATIO:
-                Span ratioUnit = SpanUtil.find(sizeInfo.relatedElementId, isHorizontal, resolvedUnits);
+                Span relatedSpan = SpanUtil.find(sizeInfo.relatedElementId, isHorizontal, resolvedSpans);
 
-                if (ratioUnit != null) {
-                    return (int) (sizeInfo.size * ratioUnit.getSize());
-                }
-
-                return UNRESOLVABLE_SIZE;
-            case SizeInfo.METRIC_ALIGN:
-                Span resolveUnit = SpanUtil.find(sizeInfo.relatedElementId, isHorizontal, resolvedUnits);
-
-                if (!mHasEncounteredPositionResolutionGap && resolveUnit != null && resolveUnit.isPositionSet()) {
-                    int targetPosition = resolveUnit.getStart();
-
-                    return targetPosition > mCurrentPosition ? targetPosition - mCurrentPosition : 0;
+                if (relatedSpan != null) {
+                    return (int) (sizeInfo.size * relatedSpan.getResolvedSize());
                 }
 
                 return UNRESOLVABLE_SIZE;
@@ -99,29 +59,29 @@ public class SizeResolver {
                     return 0;
                 }
 
-                Span thisDirection = SpanUtil.find(sizeInfo.elementId, isHorizontal, resolvedUnits);
+                Span thisDirection = SpanUtil.find(sizeInfo.elementId, isHorizontal, resolvedSpans);
 
                 if (thisDirection != null) {
-                    return thisDirection.getSize();
+                    return thisDirection.getResolvedSize();
                 }
 
-                thisDirection = SpanUtil.find(sizeInfo.elementId, isHorizontal, unresolvedUnits);
+                thisDirection = SpanUtil.find(sizeInfo.elementId, isHorizontal, unresolvedSpans);
 
                 if (thisDirection == null) {
                     throw new RuntimeException("Referenced element(" + sizeInfo.elementId + ") not found in unresovled units.");
                 }
 
-                Span otherDirection = SpanUtil.find(sizeInfo.elementId, !isHorizontal, resolvedUnits);
+                Span otherDirection = SpanUtil.find(sizeInfo.elementId, !isHorizontal, resolvedSpans);
 
                 if (otherDirection == null) {
-                    otherDirection = SpanUtil.find(sizeInfo.elementId, !isHorizontal, unresolvedUnits);
+                    otherDirection = SpanUtil.find(sizeInfo.elementId, !isHorizontal, unresolvedSpans);
 
                     if (otherDirection == null) {
                         throw new RuntimeException("Other direction not found for referenced view(" + sizeInfo.elementId + ").");
                     }
                 }
 
-                if (otherDirection.isSizeSet()) {
+                if (otherDirection.isSizeResolved()) {
                     int minSelf = 0;
                     int maxSelf = -1;
 
@@ -129,23 +89,23 @@ public class SizeResolver {
                         Span span = (Span) sizeInfo;
 
                         if (span.min != null) {
-                            minSelf = resolveSize(span.min, isHorizontal);
+                            minSelf = resolveSize(span.min, isHorizontal, totalSize);
                         }
 
                         if (span.max != null) {
-                            maxSelf = resolveSize(span.max, isHorizontal);
+                            maxSelf = resolveSize(span.max, isHorizontal, totalSize);
                         }
                     }
 
-                    maxSelf = maxSelf == -1 ? mTotalSize : Math.min(maxSelf, mTotalSize);
+                    maxSelf = maxSelf == -1 ? totalSize : Math.min(maxSelf, totalSize);
 
                     if (isHorizontal) {
-                        measureViewWidth(view, otherDirection.getSize(), minSelf, maxSelf);
+                        measureViewWidth(view, otherDirection.getResolvedSize(), minSelf, maxSelf);
 
                         return view.getMeasuredWidth();
                     }
 
-                    measureViewHeight(view, otherDirection.getSize(), minSelf, maxSelf);
+                    measureViewHeight(view, otherDirection.getResolvedSize(), minSelf, maxSelf);
 
                     return view.getMeasuredHeight();
                 }
@@ -158,11 +118,11 @@ public class SizeResolver {
                         Span span = (Span) sizeInfo;
 
                         if (span.min != null) {
-                            minSelf = resolveSize(span.min, isHorizontal);
+                            minSelf = resolveSize(span.min, isHorizontal, totalSize);
                         }
 
                         if (span.max != null) {
-                            maxSelf = resolveSize(span.max, isHorizontal);
+                            maxSelf = resolveSize(span.max, isHorizontal, totalSize);
                         }
                     }
 
@@ -173,16 +133,16 @@ public class SizeResolver {
                         Span span = otherDirection;
 
                         if (span.min != null) {
-                            minOther = resolveSize(span.min, !isHorizontal);
+                            minOther = resolveSize(span.min, !isHorizontal, totalSize);
                         }
 
                         if (span.max != null) {
-                            maxOther = resolveSize(span.max, !isHorizontal);
+                            maxOther = resolveSize(span.max, !isHorizontal, totalSize);
                         }
                     }
 
                     if (maxSelf == -1) {
-                        maxSelf = mTotalSize;
+                        maxSelf = totalSize;
                     }
 
                     if (isHorizontal) {
@@ -193,10 +153,10 @@ public class SizeResolver {
                         measureView(view, minSelf, maxSelf, minOther, maxOther);
 
                         if (view.getMeasuredHeight() != UNRESOLVABLE_SIZE) {
-                            otherDirection.setSize(view.getMeasuredHeight());
+                            otherDirection.setResolvedSize(view.getMeasuredHeight());
 
-                            unresolvedUnits.remove(otherDirection);
-                            resolvedUnits.add(otherDirection);
+                            unresolvedSpans.remove(otherDirection);
+                            resolvedSpans.add(otherDirection);
                         }
 
                         return view.getMeasuredWidth();
@@ -209,10 +169,10 @@ public class SizeResolver {
                     measureView(view, minOther, maxOther, minSelf, maxSelf);
 
                     if (view.getMeasuredWidth() != UNRESOLVABLE_SIZE) {
-                        otherDirection.setSize(view.getMeasuredWidth());
+                        otherDirection.setResolvedSize(view.getMeasuredWidth());
 
-                        unresolvedUnits.remove(otherDirection);
-                        resolvedUnits.add(otherDirection);
+                        unresolvedSpans.remove(otherDirection);
+                        resolvedSpans.add(otherDirection);
                     }
 
                     return view.getMeasuredHeight();

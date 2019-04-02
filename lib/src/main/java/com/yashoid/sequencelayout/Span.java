@@ -19,7 +19,7 @@ public class Span extends SizeInfo {
 
     public int visibilityElement = 0;
 
-    public int size = -1;
+    public int resolvedSize = -1;
     public int start = -1;
     public int end = -1;
 
@@ -77,15 +77,15 @@ public class Span extends SizeInfo {
 
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setResolvedSize(int resolvedSize) {
+        this.resolvedSize = resolvedSize;
     }
 
-    public int getSize() {
-        return size;
+    public int getResolvedSize() {
+        return resolvedSize;
     }
-    public boolean isSizeSet() {
-        return size != -1;
+    public boolean isSizeResolved() {
+        return resolvedSize != -1;
     }
 
     public int getStart() {

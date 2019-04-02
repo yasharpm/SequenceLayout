@@ -18,8 +18,8 @@ class PageResolver implements SizeResolverHost {
 
     private List<Sequence> mUnresolvedSequences = new ArrayList<>();
 
-    private List<Span> mUnresolvedUnits = new ArrayList<>();
-    private List<Span> mResolvedUnits = new ArrayList<>();
+    private List<Span> mUnresolvedSpans = new ArrayList<>();
+    private List<Span> mResolvedSpans = new ArrayList<>();
 
     private int mResolvedWidth = -1;
     private int mResolvedHeight = -1;
@@ -52,22 +52,22 @@ class PageResolver implements SizeResolverHost {
     void onSequenceAdded(Sequence sequence) {
         mSequences.add(sequence);
 
-        mUnresolvedUnits.addAll(sequence.getSpans());
+        mUnresolvedSpans.addAll(sequence.getSpans());
     }
 
     void onSequenceRemoved(Sequence sequence) {
         mSequences.remove(sequence);
 
-        mResolvedUnits.removeAll(sequence.getSpans());
-        mUnresolvedUnits.removeAll(sequence.getSpans());
+        mResolvedSpans.removeAll(sequence.getSpans());
+        mUnresolvedSpans.removeAll(sequence.getSpans());
     }
 
     void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
         mResolvingWidth = pageWidth;
         mResolvingHeight = pageHeight;
 
-        mUnresolvedUnits.addAll(mResolvedUnits);
-        mResolvedUnits.clear();
+        mUnresolvedSpans.addAll(mResolvedSpans);
+        mResolvedSpans.clear();
 
         mUnresolvedSequences.clear();
         mUnresolvedSequences.addAll(mSequences);
@@ -101,7 +101,7 @@ class PageResolver implements SizeResolverHost {
     }
 
     void layoutViews() { // TODO Improve for real!
-        for (Span unit: mResolvedUnits) {
+        for (Span unit: mResolvedSpans) {
             View child = mView.findViewById(unit.elementId);
 
             if (unit.isHorizontal) {
@@ -131,13 +131,13 @@ class PageResolver implements SizeResolverHost {
     }
 
     @Override
-    public List<Span> getResolvedUnits() {
-        return mResolvedUnits;
+    public List<Span> getResolvedSpans() {
+        return mResolvedSpans;
     }
 
     @Override
-    public List<Span> getUnresolvedUnits() {
-        return mUnresolvedUnits;
+    public List<Span> getUnresolvedSpans() {
+        return mUnresolvedSpans;
     }
 
     @Override

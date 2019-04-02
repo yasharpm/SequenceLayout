@@ -15,17 +15,4 @@ public class SpanUtil {
         return index < 0 ? null : spanList.get(index);
     }
 
-    public static Span remove(int targetId, boolean horizontal, List<Span> spanList) {
-        Span span = find(targetId, horizontal, spanList);
-
-        if (span != null) {
-            spanList.remove(span);
-
-            return span;
-        }
-
-        return null;
-    }
-
-
 }

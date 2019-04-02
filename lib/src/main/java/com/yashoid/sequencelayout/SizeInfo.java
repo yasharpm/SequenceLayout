@@ -113,7 +113,7 @@ public class SizeInfo {
         return metric == METRIC_ELEMENT_RATIO || metric == METRIC_ALIGN;
     }
 
-    public int measureStaticSize(int totalSize, PageSizeProvider pageSizeProvider) {
+    public int measureStaticSize(int totalSize, SizeResolverHost pageSizeProvider) {
         switch (metric) {
             case METRIC_PX:
                 return (int) size;

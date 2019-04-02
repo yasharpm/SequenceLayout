@@ -4,12 +4,18 @@ import android.view.View;
 
 import java.util.List;
 
-public interface SizeResolverHost extends PageSizeProvider {
+public interface SizeResolverHost {
+
+    float getPgSize();
+
+    float getPgUnitSize();
+
+    float getScreenDensity();
 
     View findViewById(int id);
 
-    List<Span> getResolvedUnits();
-    List<Span> getUnresolvedUnits();
+    List<Span> getResolvedSpans();
+    List<Span> getUnresolvedSpans();
 
     int getResolvingWidth();
     int getResolvingHeight();
