@@ -7,6 +7,4 @@ While performing faster than ConstraintLayout, SequenceLayout makes it possible 
 This sample layout is defined by about 170 lines of XML. It is consisted of 22 views which took about 200 lines to define.
 The following animations display the extend of the flexibily available.
 
-<img src="https://github.com/yasharpm/SequenceLayout/raw/master/vertical.gif" width="400px"/>
-<img src="https://github.com/yasharpm/SequenceLayout/raw/master/horizontal.gif" width="400px"/>
-<img src="https://github.com/yasharpm/SequenceLayout/raw/master/both.gif" width="400px"/>
+<img src="https://github.com/yasharpm/SequenceLayout/raw/master/vertical.gif" width="260px"/><img src="https://github.com/yasharpm/SequenceLayout/raw/master/horizontal.gif" width="260px"/><img src="https://github.com/yasharpm/SequenceLayout/raw/master/both.gif" width="260px"/>
