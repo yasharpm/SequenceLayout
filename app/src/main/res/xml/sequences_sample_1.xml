@@ -2,7 +2,7 @@
 <Sequences>
 
     <Vertical id="spine">
-        <Span size="40pg"/>
+        <Span size="32pg"/>
         <Span id="text_title" size="wrap"/>
         <Span size="20pg"/>
         <Span size="20w"/>
