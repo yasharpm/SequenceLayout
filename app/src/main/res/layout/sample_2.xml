@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.yashoid.sequencelayout.SequenceLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.yashoid.sequencelayout.sample.ResizeableParent xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,7 +9,7 @@
     android:background="#fff"
 
     app:pgSize="360"
-    app:sequences="@xml/sequences_main">
+    app:sequences="@xml/sequences_sample_2">
 
     <View
         android:id="@+id/toolbar_back"
@@ -61,4 +61,28 @@
         android:layout_height="match_parent"
         android:background="#33ee33"/>
 
-</com.yashoid.sequencelayout.SequenceLayout>
+    <View
+        android:id="@+id/check1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f8f866"/>
+
+    <View
+        android:id="@+id/check2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f8f866"/>
+
+    <View
+        android:id="@+id/check3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f8f866"/>
+
+    <View
+        android:id="@+id/check4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f8f866"/>
+
+</com.yashoid.sequencelayout.sample.ResizeableParent>

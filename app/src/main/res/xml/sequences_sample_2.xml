@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sequences>
+
+    <Vertical id="main">
+        <Span id="toolbar_back" size="52pg"/>
+        <Span size="24pg"/>
+        <Span id="input1" size="48pg"/>
+        <Span size="16pg"/>
+        <Span id="input2" size="100%input1"/>
+        <Span size="16pg"/>
+        <Span id="input3" size="100%input1"/>
+        <Span size="16pg"/>
+        <Span id="input4" size="100%input1"/>
+        <Span size="1w" min="36pg"/>
+        <Span id="button" size="52pg"/>
+    </Vertical>
+
+    <Vertical id="toolbar_title" start="start@" end="end@toolbar_back">
+        <Span size="1w"/>
+        <Span id="toolbar_title" size="wrap"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Horizontal id="toolbar">
+        <Span id="toolbar_back" size="100%"/>
+    </Horizontal>
+
+    <Horizontal id="toolbar_title">
+        <Span size="1w"/>
+        <Span id="toolbar_title" size="wrap"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Horizontal id="input1">
+        <Span size="16pg"/>
+        <Span id="input1" size="1w"/>
+        <Span size="16pg"/>
+    </Horizontal>
+
+    <Horizontal id="input2">
+        <Span size="align@input1"/>
+        <Span id="input2" size="100%input1"/>
+    </Horizontal>
+
+    <Horizontal id="input3">
+        <Span size="align@input1"/>
+        <Span id="input3" size="100%input1"/>
+    </Horizontal>
+
+    <Horizontal id="input4">
+        <Span size="align@input1"/>
+        <Span id="input4" size="100%input1"/>
+    </Horizontal>
+
+    <Horizontal id="button">
+        <Span id="button" size="100%"/>
+    </Horizontal>
+
+    <Horizontal id="hchecks" start="start@input2" end="end@input2">
+        <Span size="0.5w"/>
+        <Span id="check1" size="15%"/>
+        <Span size="2w"/>
+        <Span id="check2" size="15%"/>
+        <Span size="0.5w"/>
+        <Span id="check3" size="15%"/>
+        <Span size="2w"/>
+        <Span id="check4" size="15%"/>
+        <Span size="0.5w"/>
+    </Horizontal>
+
+    <Vertical id="check1" start="start@input2" end="end@input2">
+        <Span size="1w"/>
+        <Span id="check1" size="50%"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Vertical id="check2" start="start@input2" end="end@input2">
+        <Span size="1w"/>
+        <Span id="check2" size="50%"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Vertical id="check3" start="start@input2" end="end@input2">
+        <Span size="1w"/>
+        <Span id="check3" size="50%"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Vertical id="check4" start="start@input2" end="end@input2">
+        <Span size="1w"/>
+        <Span id="check4" size="50%"/>
+        <Span size="1w"/>
+    </Vertical>
+
+</Sequences>

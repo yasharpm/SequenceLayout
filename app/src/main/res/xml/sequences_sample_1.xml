@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sequences>
+
+    <Vertical id="spine">
+        <Span size="40pg"/>
+        <Span id="text_title" size="wrap"/>
+        <Span size="20pg"/>
+        <Span size="20w"/>
+        <Span id="image_profile" size="220w" min="120pg"/>
+        <Span size="16pg"/>
+        <Span size="16w"/>
+        <Span id="text_name" size="wrap"/>
+        <Span size="8pg"/>
+        <Span size="8w"/>
+        <Span id="text_age" size="wrap"/>
+        <Span size="16pg"/>
+        <Span size="32w"/>
+        <Span id="button_chat" size="70pg"/>
+        <Span size="12pg"/>
+        <Span size="28w"/>
+        <Span id="helper_followers_start" size="12pg"/>
+        <Span size="16w"/>
+        <Span id="text_following_title" size="wrap"/>
+        <Span size="4pg"/>
+        <Span id="text_following" size="wrap"/>
+        <Span size="16w"/>
+        <Span id="helper_followers_end" size="12pg"/>
+        <Span size="16pg"/>
+        <Span size="36w"/>
+        <Span id="text_about" size="wrap"/>
+        <Span size="4pg"/>
+        <Span size="4w"/>
+        <Span id="divider_about" size="1pg"/>
+        <Span size="15pg"/>
+        <Span size="15w"/>
+        <Span id="text_about_content" size="wrap"/>
+        <Span size="40pg"/>
+    </Vertical>
+
+    <Horizontal>
+        <Span size="30pg"/>
+        <Span id="image_config" size="34pg"/>
+        <Span size="1w"/>
+        <Span id="text_title" size="wrap"/>
+        <Span size="1w"/>
+        <Span id="image_settings" size="100%image_config"/>
+        <Span size="30pg"/>
+    </Horizontal>
+
+    <Vertical start="start@text_title" end="end@text_title">
+        <Span size="1w"/>
+        <Span id="image_config" size="34pg"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Vertical start="start@text_title" end="end@text_title">
+        <Span size="1w"/>
+        <Span id="image_settings" size="100%image_config"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Horizontal>
+        <Span size="1w"/>
+        <Span id="image_profile" size="wrap"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Horizontal>
+        <Span size="1w"/>
+        <Span id="text_name" size="wrap"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Horizontal>
+        <Span size="1w"/>
+        <Span id="text_status" size="wrap"/>
+        <Span size="20pg"/>
+        <Span id="divider_status" size="2pg"/>
+        <Span size="20pg"/>
+        <Span id="text_age" size="wrap"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Vertical start="start@text_age">
+        <Span id="text_status" size="wrap"/>
+    </Vertical>
+
+    <Vertical start="start@text_age" end="end@text_age">
+        <Span size="1w"/>
+        <Span id="divider_status" size="75%"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Horizontal>
+        <Span size="1w"/>
+        <Span id="button_call" size="70pg"/>
+        <Span size="1.5w"/>
+        <Span id="button_chat" size="100%button_call"/>
+        <Span size="1.5w"/>
+        <Span id="button_email" size="100%button_call"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Vertical start="start@button_chat">
+        <Span id="button_call" size="100%button_chat"/>
+    </Vertical>
+
+    <Vertical start="start@button_chat">
+        <Span id="button_email" size="100%button_chat"/>
+    </Vertical>
+
+    <Vertical start="start@helper_followers_start" end="end@helper_followers_end">
+        <Span id="followers_background" size="100%"/>
+    </Vertical>
+
+    <Horizontal start="start@image_config" end="end@image_settings">
+        <Span id="followers_background" size="100%"/>
+    </Horizontal>
+
+    <Horizontal>
+        <Span size="1w"/>
+        <Span id="divider_followers" size="1pg"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Vertical start="start@text_following_title" end="end@text_following">
+        <Span id="divider_followers" size="100%"/>
+    </Vertical>
+
+    <Vertical start="start@text_following_title">
+        <Span id="text_followers_title" size="wrap"/>
+    </Vertical>
+
+    <Vertical start="start@text_following">
+        <Span id="text_followers" size="wrap"/>
+    </Vertical>
+
+    <Horizontal start="start@followers_background" end="start@divider_followers">
+        <Span size="1w"/>
+        <Span id="text_followers_title" size="wrap"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Horizontal start="start@followers_background" end="start@divider_followers">
+        <Span size="1w"/>
+        <Span id="text_followers" size="wrap"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Horizontal start="end@divider_followers" end="end@followers_background">
+        <Span size="1w"/>
+        <Span id="text_following_title" size="wrap"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Horizontal start="end@divider_followers" end="end@followers_background">
+        <Span size="1w"/>
+        <Span id="text_following" size="wrap"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+    <Horizontal start="start@image_config">
+        <Span id="text_about" size="wrap"/>
+    </Horizontal>
+
+    <Horizontal start="start@image_config">
+        <Span id="divider_about" size="200%text_about"/>
+    </Horizontal>
+
+    <Horizontal start="start@image_config" end="end@image_settings">
+        <Span id="text_about_content" size="100%"/>
+    </Horizontal>
+
+</Sequences>

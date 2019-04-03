@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yashoid.sequencelayout.sample.ResizeableParent xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+
+    android:background="@drawable/background"
+
+    app:pgSize="560"
+    app:sequences="@xml/sequences_sample_1">
+
+    <View
+        android:id="@+id/toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/text_title"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="PROFILE"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_config"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_config"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_settings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_settings"/>
+
+    <com.yashoid.sequencelayout.sample.SquareImageView
+        android:id="@+id/image_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:padding="4dp"
+        android:background="@drawable/profile_background"
+        app:srcCompat="@drawable/image_profile"
+        android:elevation="8dp"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_name"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Maya Talaie"
+        android:textSize="26sp"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_status"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Active"
+        android:textSize="14sp"/>
+
+    <View
+        android:id="@+id/divider_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:background="#fff"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_age"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="30 year old"
+        android:textSize="14sp"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/button_call"
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:srcCompat="@drawable/ic_call"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/button_chat"
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:srcCompat="@drawable/ic_chat"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/button_email"
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:srcCompat="@drawable/ic_message"/>
+
+    <View
+        android:id="@+id/followers_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:background="@drawable/background_followers"/>
+
+    <View
+        android:id="@+id/helper_followers_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_followers_title"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="FOLLOWERS"
+        android:textSize="12sp"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_followers"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="19566"
+        android:textSize="22sp"
+        android:textStyle="bold"/>
+
+    <View
+        android:id="@+id/divider_followers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:background="#fff"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_following_title"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="FOLLOWING"
+        android:textSize="12sp"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_following"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="1303"
+        android:textSize="22sp"
+        android:textStyle="bold"/>
+
+    <View
+        android:id="@+id/helper_followers_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_about"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="About"
+        android:textSize="14sp"/>
+
+    <View
+        android:id="@+id/divider_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:background="#fff"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text_about_content"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="This is a FLAT layout that is created by about 370 line of XML code. 200 line of which is used for defining the views and ONLY 170 lines is written for placements."
+        android:textSize="14sp"
+        android:lineSpacingExtra="6dp"/>
+
+</com.yashoid.sequencelayout.sample.ResizeableParent>

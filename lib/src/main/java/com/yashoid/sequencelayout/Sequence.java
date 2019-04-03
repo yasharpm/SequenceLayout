@@ -10,10 +10,10 @@ public class Sequence {
 
     public static class SequenceEdge {
 
-        public int targetId;
-        public float portion;
+        public static SequenceEdge read(String definition, Context context) {
+            int targetId;
+            float portionValue;
 
-        public SequenceEdge(String definition, Context context) {
             int atIndex = definition.indexOf("@");
 
             String targetRawId = definition.substring(atIndex + 1);
@@ -29,18 +29,28 @@ public class Sequence {
 
             switch (portion) {
                 case "start":
-                    this.portion = 0;
+                    portionValue = 0;
                     break;
                 case "end":
-                    this.portion = 1;
+                    portionValue = 1;
                     break;
                 default:
-                    this.portion = Float.parseFloat(portion) / 100f;
+                    portionValue = Float.parseFloat(portion) / 100f;
                     break;
             }
+
+            return new SequenceEdge(targetId, portionValue);
         }
 
-        public int resolve(Sequence sequence, int totalSize, List<Span> resolvedSizes) {
+        public int targetId;
+        public float portion;
+
+        public SequenceEdge(int targetId, float portion) {
+            this.targetId = targetId;
+            this.portion = portion;
+        }
+
+        protected int resolve(Sequence sequence, int totalSize, List<Span> resolvedSizes) {
             if (targetId == 0) {
                 return (int) (totalSize * portion);
             }
@@ -73,7 +83,7 @@ public class Sequence {
     private SizeResolver mSizeResolver;
 
     public Sequence(String id, boolean isHorizontal, String start, String end, Context context) {
-        this(id, isHorizontal, new SequenceEdge(start, context), new SequenceEdge(end, context));
+        this(id, isHorizontal, SequenceEdge.read(start, context), SequenceEdge.read(end, context));
     }
 
     public Sequence(String id, boolean isHorizontal, SequenceEdge start, SequenceEdge end) {
@@ -99,8 +109,17 @@ public class Sequence {
         mSpans.add(span);
     }
 
+    public void removeSpan(Span span) {
+        mSpans.remove(span);
+    }
+
     public List<Span> getSpans() {
         return mSpans;
+    }
+
+    public void setSpans(List<Span> spans) {
+        mSpans.clear();
+        mSpans.addAll(spans);
     }
 
     public int resolve(SizeResolverHost host, boolean wrapping) {
@@ -223,6 +242,22 @@ public class Sequence {
                 if (size == SizeInfo.SIZE_WEIGHTED) {
                     if (!wrapping) {
                         size = (int) (span.size * remainingSize / remainingWeight);
+
+                        if (span.min != null) {
+                            int minSize = mSizeResolver.resolveSize(span.min, mIsHorizontal, totalSize);
+
+                            if (minSize != -1) {
+                                size = Math.max(size, minSize);
+                            }
+                        }
+
+                        if (span.max != null) {
+                            int maxSize = mSizeResolver.resolveSize(span.max, mIsHorizontal, totalSize);
+
+                            if (maxSize != -1) {
+                                size = Math.min(size, maxSize);
+                            }
+                        }
                     }
                     else {
                         size = 0;

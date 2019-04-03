@@ -1,5 +1,6 @@
 package com.yashoid.sequencelayout;
 
+import android.text.TextUtils;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -60,6 +61,16 @@ class PageResolver implements SizeResolverHost {
 
         mResolvedSpans.removeAll(sequence.getSpans());
         mUnresolvedSpans.removeAll(sequence.getSpans());
+    }
+
+    Sequence findSequenceById(String id) {
+        for (Sequence sequence: mSequences) {
+            if (TextUtils.equals(id, sequence.getId())) {
+                return sequence;
+            }
+        }
+
+        return null;
     }
 
     void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {

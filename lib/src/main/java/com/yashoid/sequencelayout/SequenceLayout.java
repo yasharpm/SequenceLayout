@@ -59,6 +59,30 @@ public class SequenceLayout extends ViewGroup {
         return mPgSize;
     }
 
+    public float resolveSize(float size) {
+        if (mPgSize == 0) {
+            return size;
+        }
+
+        return size * getWidth() / mPgSize;
+    }
+
+    public void addSequence(Sequence sequence) {
+        mPageResolver.onSequenceAdded(sequence);
+
+        requestLayout();
+    }
+
+    public void removeSequence(Sequence sequence) {
+        mPageResolver.onSequenceRemoved(sequence);
+
+        requestLayout();
+    }
+
+    public Sequence findSequenceById(String id) {
+        return mPageResolver.findSequenceById(id);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
