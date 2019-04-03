@@ -18,13 +18,13 @@
         <Span id="button_chat" size="70pg"/>
         <Span size="12pg"/>
         <Span size="28w"/>
-        <Span id="helper_followers_start" size="12pg"/>
-        <Span size="16w"/>
+        <Span id="helper_followers_start" size="6pg"/>
+        <Span size="22w"/>
         <Span id="text_following_title" size="wrap"/>
-        <Span size="4pg"/>
+        <Span size="4w"/>
         <Span id="text_following" size="wrap"/>
-        <Span size="16w"/>
-        <Span id="helper_followers_end" size="12pg"/>
+        <Span size="22w"/>
+        <Span id="helper_followers_end" size="6pg"/>
         <Span size="16pg"/>
         <Span size="36w"/>
         <Span id="text_about" size="wrap"/>
@@ -34,7 +34,8 @@
         <Span size="15pg"/>
         <Span size="15w"/>
         <Span id="text_about_content" size="wrap"/>
-        <Span size="40pg"/>
+        <Span size="20pg"/>
+        <Span size="20w"/>
     </Vertical>
 
     <Horizontal>
