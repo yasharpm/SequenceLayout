@@ -1,0 +1,60 @@
+apply plugin: 'com.android.library'
+
+ext {
+    bintrayRepo = 'YashoidLibraries'
+    bintrayName = 'sequencelayout'
+
+    publishedGroupId = 'com.yashoid'
+    libraryName = 'SequenceLayout'
+    artifact = 'sequencelayout'
+
+    libraryDescription = 'SequenceLayout is an Android layout which is more flexible than ConstraintLayout.'
+
+    siteUrl = 'https://github.com/yasharpm/SequenceLayout'
+    gitUrl = 'https://github.com/yasharpm/SequenceLayout.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = 'yasharpm'
+    developerName = 'Yashar PourMohammad'
+    developerEmail = 'yasharpm@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+        apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}

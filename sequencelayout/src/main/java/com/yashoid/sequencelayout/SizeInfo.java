@@ -2,7 +2,6 @@ package com.yashoid.sequencelayout;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 
 public class SizeInfo {
 
@@ -15,7 +14,7 @@ public class SizeInfo {
     public static final int METRIC_RATIO = 3;
 
     // Element related metrics
-    public static final int METRIC_ELEMENT_RATIO = 5;
+    public static final int METRIC_VIEW_RATIO = 5;
     public static final int METRIC_ALIGN = 6;
 
     // Wrapping metric
@@ -30,7 +29,7 @@ public class SizeInfo {
     private static final String M_MM = "mm";
     private static final String M_PG = "pg";
     private static final String M_WRAP = "wrap";
-    private static final String M_ELEMENT_RATIO = "%";
+    private static final String M_VIEW_RATIO = "%";
     private static final String M_ALIGN = "align@";
 
     private static final float MM_PER_INCH = 25.4f;
@@ -66,12 +65,12 @@ public class SizeInfo {
             sizeInfo.metric = METRIC_PG;
             sizeInfo.size = readFloat(size, M_PG);
         }
-        else if (size.contains(M_ELEMENT_RATIO)) {
-            sizeInfo.metric = METRIC_ELEMENT_RATIO;
+        else if (size.contains(M_VIEW_RATIO)) {
+            sizeInfo.metric = METRIC_VIEW_RATIO;
 
-            int ratioPosition = size.indexOf(M_ELEMENT_RATIO);
+            int ratioPosition = size.indexOf(M_VIEW_RATIO);
 
-            String rawId = size.substring(ratioPosition + M_ELEMENT_RATIO.length());
+            String rawId = size.substring(ratioPosition + M_VIEW_RATIO.length());
             sizeInfo.relatedElementId = resolveViewId(rawId, context);
             sizeInfo.size = Float.parseFloat(size.substring(0, ratioPosition)) / 100f;
         }
@@ -110,7 +109,7 @@ public class SizeInfo {
     }
 
     public boolean isElementRelated() {
-        return metric == METRIC_ELEMENT_RATIO || metric == METRIC_ALIGN;
+        return metric == METRIC_VIEW_RATIO || metric == METRIC_ALIGN;
     }
 
     public int measureStaticSize(int totalSize, SizeResolverHost pageSizeProvider) {

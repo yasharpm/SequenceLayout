@@ -46,7 +46,7 @@ public class SizeResolver {
             case SizeInfo.METRIC_PG:
             case SizeInfo.METRIC_RATIO:
                 return sizeInfo.measureStaticSize(totalSize, mHost);
-            case SizeInfo.METRIC_ELEMENT_RATIO:
+            case SizeInfo.METRIC_VIEW_RATIO:
                 Span relatedSpan = SpanUtil.find(sizeInfo.relatedElementId, isHorizontal, resolvedSpans);
 
                 if (relatedSpan != null) {

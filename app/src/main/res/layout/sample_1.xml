@@ -11,11 +11,6 @@
     app:pgSize="560"
     app:sequences="@xml/sequences_sample_1">
 
-    <View
-        android:id="@+id/toolbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
     <TextView
         android:id="@+id/text_title"
         style="@style/TextStyle"
