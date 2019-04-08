@@ -1,3 +1,4 @@
+[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-Sequence%20Layout-green.svg?style=flat )]( https://android-arsenal.com/details/1/7609 )
 # Sequence Layout
 SequenceLayout is a new solution to layout problem. Taken account the strenghts and weaknesses of ConstraintLayout, this new layout is much more flexible and also very much simpler to understand and define.
 
