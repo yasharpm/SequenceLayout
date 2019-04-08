@@ -133,29 +133,13 @@ public class Sequence {
         int start = mStart.resolve(this, totalSize, resolvedSpans);
         int end = mEnd.resolve(this, totalSize, resolvedSpans);
 
-        if (start < 0 || end < 0) {
-            for (int index = 0; index < mSpans.size(); index++) {
-                Span span = mSpans.get(index);
-
-                if (span.elementId != 0) {
-                    if (span.isStatic()) {
-                        unresolvedSpans.remove(span);
-
-                        span.setResolvedSize(mSizeResolver.resolveSize(span, mIsHorizontal, totalSize));
-
-                        resolvedSpans.add(span);
-                    }
-                }
-            }
-
-            return -1;
-        }
+        boolean boundariesAreKnown = start >= 0 && end >= 0;
 
         if (end < start) {
             end = start;
         }
 
-        totalSize = end - start;
+        totalSize = boundariesAreKnown ? end - start : -1;
 
         float weightSum = 0;
         int calculatedSize = 0;
@@ -164,7 +148,7 @@ public class Sequence {
         mMeasuredSizes.clear();
 
         boolean hasUnresolvedSizes = false;
-        boolean hasEncounteredPositionResolutionGap = false;
+        boolean hasEncounteredPositionResolutionGap = !boundariesAreKnown;
 
         for (int index = 0; index < mSpans.size(); index++) {
             Span span = mSpans.get(index);
@@ -222,7 +206,7 @@ public class Sequence {
             }
         }
 
-        if (hasUnresolvedSizes) {
+        if (hasUnresolvedSizes || !boundariesAreKnown) {
             return -1;
         }
 

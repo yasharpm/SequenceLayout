@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yashoid.sequencelayout.sample.ResizeableParent xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+
+    android:background="@drawable/background"
+
+    app:pgSize="560"
+    app:sequences="@xml/sequences_sample_3">
+
+    <View
+        android:id="@+id/row1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/row1_col1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_settings"
+        android:scaleType="centerInside"/>
+
+    <TextView
+        android:id="@+id/row1_col2"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="This is a short text."
+        android:textSize="20sp"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"/>
+
+    <View
+        android:id="@+id/row2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/row2_col1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_settings"
+        android:scaleType="centerInside"/>
+
+    <TextView
+        android:id="@+id/row2_col2"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="This text is specially very long. This text is specially very long. This text is specially very long. This text is specially very long. This text is specially very long. This text is specially very long. This text is specially very long. This text is specially very long."
+        android:textSize="20sp"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"/>
+
+</com.yashoid.sequencelayout.sample.ResizeableParent>

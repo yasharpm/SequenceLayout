@@ -16,12 +16,13 @@ public class SizeInfo {
     // Element related metrics
     public static final int METRIC_VIEW_RATIO = 5;
     public static final int METRIC_ALIGN = 6;
+    public static final int METRIC_MAX = 7;
 
     // Wrapping metric
-    public static final int METRIC_WRAP = 7;
+    public static final int METRIC_WRAP = 8;
 
     // Weighted metric
-    public static final int METRIC_WEIGHT = 8;
+    public static final int METRIC_WEIGHT = 9;
 
     private static final String M_WEIGHT = "w";
     private static final String M_RATIO = "%";
@@ -31,6 +32,7 @@ public class SizeInfo {
     private static final String M_WRAP = "wrap";
     private static final String M_VIEW_RATIO = "%";
     private static final String M_ALIGN = "align@";
+    private static final String M_MAX = "@MAX";
 
     private static final float MM_PER_INCH = 25.4f;
     private static final float MM_TO_PX_RATIO = 160 / MM_PER_INCH ;
@@ -42,7 +44,20 @@ public class SizeInfo {
 
         sizeInfo.encoded = size;
 
-        if (size.endsWith(M_WRAP)) {
+        if (size.startsWith(M_MAX)) {
+            sizeInfo.metric = METRIC_MAX;
+
+            String[] rawSizeInfoArr = size.substring(M_MAX.length() + 1, size.length() - 1).split(",");
+
+            sizeInfo.relations = new SizeInfo[rawSizeInfoArr.length];
+
+            for (int i = 0; i < rawSizeInfoArr.length; i++) {
+                sizeInfo.relations[i] = new SizeInfo();
+
+                readSizeInfo(rawSizeInfoArr[i], sizeInfo.relations[i], context);
+            }
+        }
+        else if (size.endsWith(M_WRAP)) {
             sizeInfo.metric = METRIC_WRAP;
         }
         else if (size.endsWith(M_WEIGHT)) {
@@ -92,6 +107,7 @@ public class SizeInfo {
     public float size;
     public int metric = METRIC_WRAP;
     public int relatedElementId = 0;
+    public SizeInfo[] relations = null;
 
     private String encoded;
 
@@ -109,7 +125,7 @@ public class SizeInfo {
     }
 
     public boolean isElementRelated() {
-        return metric == METRIC_VIEW_RATIO || metric == METRIC_ALIGN;
+        return metric == METRIC_VIEW_RATIO || metric == METRIC_ALIGN || metric == METRIC_MAX;
     }
 
     public int measureStaticSize(int totalSize, SizeResolverHost pageSizeProvider) {

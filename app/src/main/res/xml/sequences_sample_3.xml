@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sequences>
+
+    <Vertical>
+        <Span id="row1" size="@MAX(100%row1_col1,100%row1_col2)"/>
+    </Vertical>
+
+    <Vertical start="start@row1" end="end@row1">
+        <Span size="1w"/>
+        <Span id="row1_col1" size="wrap"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Vertical start="start@row1" end="end@row1">
+        <Span size="1w"/>
+        <Span id="row1_col2" size="wrap"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Vertical start="end@row1">
+        <Span id="row2" size="@MAX(100%row2_col1,100%row2_col2)"/>
+    </Vertical>
+
+    <Vertical start="start@row2" end="end@row2">
+        <Span size="1w"/>
+        <Span id="row2_col1" size="wrap"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Vertical start="start@row2" end="end@row2">
+        <Span size="1w"/>
+        <Span id="row2_col2" size="wrap"/>
+        <Span size="1w"/>
+    </Vertical>
+
+    <Horizontal>
+        <Span id="row1_col1" size="wrap"/>
+        <Span id="row1_col2" size="1w"/>
+    </Horizontal>
+
+    <Horizontal>
+        <Span id="row2_col1" size="wrap"/>
+        <Span id="row2_col2" size="1w"/>
+    </Horizontal>
+
+</Sequences>

@@ -44,8 +44,9 @@ public class SizeResolver {
             case SizeInfo.METRIC_PX:
             case SizeInfo.METRIC_MM:
             case SizeInfo.METRIC_PG:
-            case SizeInfo.METRIC_RATIO:
                 return sizeInfo.measureStaticSize(totalSize, mHost);
+            case SizeInfo.METRIC_RATIO:
+                return totalSize == -1 ? UNRESOLVABLE_SIZE : sizeInfo.measureStaticSize(totalSize, mHost);
             case SizeInfo.METRIC_VIEW_RATIO:
                 Span relatedSpan = SpanUtil.find(sizeInfo.relatedElementId, isHorizontal, resolvedSpans);
 
@@ -54,6 +55,20 @@ public class SizeResolver {
                 }
 
                 return UNRESOLVABLE_SIZE;
+            case SizeInfo.METRIC_MAX:
+                int max = 0;
+
+                for (SizeInfo si: sizeInfo.relations) {
+                    int size = resolveSize(si, isHorizontal, totalSize);
+
+                    if (size == UNRESOLVABLE_SIZE) {
+                        return UNRESOLVABLE_SIZE;
+                    }
+
+                    max = Math.max(max, size);
+                }
+
+                return max;
             case SizeInfo.METRIC_WRAP:
                 if (sizeInfo.elementId == 0) {
                     return 0;
