@@ -27,6 +27,7 @@ public class SizeInfo {
     public static final int METRIC_WEIGHT = 10;
 
     private static final String M_DP = "dp";
+    private static final String M_DP_2 = "dip";
     private static final String M_SP = "sp";
     private static final String M_WEIGHT = "w";
     private static final String M_RATIO = "%";
@@ -87,6 +88,10 @@ public class SizeInfo {
         else if (size.endsWith(M_DP)) {
             sizeInfo.metric = METRIC_DP;
             sizeInfo.size = readFloat(size, M_DP);
+        }
+        else if (size.endsWith(M_DP_2)) {
+            sizeInfo.metric = METRIC_DP;
+            sizeInfo.size = readFloat(size, M_DP_2);
         }
         else if (size.endsWith(M_SP)) {
             sizeInfo.metric = METRIC_SP;
@@ -153,6 +158,8 @@ public class SizeInfo {
                 return (int) (size * totalSize);
             case METRIC_DP:
                 return (int) (size * pageSizeProvider.getScreenDensity());
+            case METRIC_SP:
+                return (int) (size * pageSizeProvider.getScreenScaledDensity());
         }
 
         throw new RuntimeException("Metric value '" + metric + "' is not static.");
