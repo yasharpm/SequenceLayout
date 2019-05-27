@@ -50,6 +50,10 @@ public class Sequence {
             this.portion = portion;
         }
 
+        public boolean isRelativeToParent() {
+            return targetId == 0;
+        }
+
         protected int resolve(Sequence sequence, int totalSize, List<Span> resolvedSizes) {
             if (targetId == 0) {
                 return (int) (totalSize * portion);
@@ -123,6 +127,10 @@ public class Sequence {
     }
 
     public int resolve(SizeResolverHost host, boolean wrapping) {
+        if (!mStart.isRelativeToParent() && !mEnd.isRelativeToParent()) {
+            wrapping = false;
+        }
+
         mSizeResolver.setHost(host);
 
         int totalSize = mIsHorizontal ? host.getResolvingWidth() : host.getResolvingHeight();
