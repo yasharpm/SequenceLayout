@@ -19,9 +19,9 @@ public class Span extends SizeInfo {
 
     public int visibilityElement = 0;
 
-    public int resolvedSize = -1;
-    public int start = -1;
-    public int end = -1;
+    private int resolvedSize = -1;
+    private int start = -1;
+    private int end = -1;
 
     Span(XmlPullParser parser, boolean isHorizontal, Context context) {
         this.isHorizontal = isHorizontal;
@@ -77,13 +77,14 @@ public class Span extends SizeInfo {
 
     }
 
-    public void setResolvedSize(int resolvedSize) {
+    void setResolvedSize(int resolvedSize) {
         this.resolvedSize = resolvedSize;
     }
 
     public int getResolvedSize() {
         return resolvedSize;
     }
+
     public boolean isSizeResolved() {
         return resolvedSize != -1;
     }
@@ -100,11 +101,11 @@ public class Span extends SizeInfo {
         return start != -1 && end != -1;
     }
 
-    public void setStart(int start) {
+    void setStart(int start) {
         this.start = start;
     }
 
-    public void setEnd(int end) {
+    void setEnd(int end) {
         this.end = end;
     }
 

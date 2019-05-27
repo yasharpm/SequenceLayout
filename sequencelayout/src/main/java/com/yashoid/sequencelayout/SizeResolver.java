@@ -10,11 +10,11 @@ public class SizeResolver {
 
     private SizeResolverHost mHost;
 
-    public SizeResolver() {
+    SizeResolver() {
 
     }
 
-    public void setHost(SizeResolverHost host) {
+    void setHost(SizeResolverHost host) {
         mHost = host;
     }
 
