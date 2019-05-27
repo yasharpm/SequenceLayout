@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sequences>
+
+    <Horizontal>
+
+        <Span size="12pg"/>
+        <Span id="image_icon" size="36pg"/>
+        <Span size="8pg"/>
+        <Span id="text_1" size="1w"/>
+        <Span size="12pg"/>
+
+    </Horizontal>
+
+    <Vertical>
+
+        <Span size="12pg"/>
+        <Span id="image_icon" size="36pg"/>
+        <Span size="8pg"/>
+        <Span id="text_1" size="wrap"/>
+        <Span size="12pg"/>
+
+    </Vertical>
+
+</Sequences>

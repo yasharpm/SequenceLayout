@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sequences>
+
+    <Vertical>
+
+        <Span size="16pg"/>
+        <Span id="button_sample1" size="wrap"/>
+        <Span size="16pg"/>
+        <Span id="button_sample2" size="wrap"/>
+        <Span size="16pg"/>
+        <Span id="button_sample3" size="wrap"/>
+        <Span size="16pg"/>
+        <Span id="button_sample4" size="wrap"/>
+
+    </Vertical>
+
+    <Horizontal>
+        <Span size="16pg"/>
+        <Span id="button_sample1" size="1w"/>
+        <Span size="16pg"/>
+    </Horizontal>
+
+    <Horizontal>
+        <Span size="16pg"/>
+        <Span id="button_sample2" size="1w"/>
+        <Span size="16pg"/>
+    </Horizontal>
+
+    <Horizontal>
+        <Span size="16pg"/>
+        <Span id="button_sample3" size="1w"/>
+        <Span size="16pg"/>
+    </Horizontal>
+
+    <Horizontal>
+        <Span size="16pg"/>
+        <Span id="button_sample4" size="1w"/>
+        <Span size="16pg"/>
+    </Horizontal>
+
+</Sequences>
