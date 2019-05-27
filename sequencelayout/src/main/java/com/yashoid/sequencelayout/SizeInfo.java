@@ -38,6 +38,7 @@ public class SizeInfo {
     private static final String M_VIEW_RATIO = "%";
     private static final String M_ALIGN = "align@";
     private static final String M_MAX = "@MAX";
+    private static final String M_REFERENCE = "@";
 
     private static final float MM_PER_INCH = 25.4f;
     private static final float MM_TO_PX_RATIO = 160 / MM_PER_INCH ;
@@ -86,7 +87,7 @@ public class SizeInfo {
             sizeInfo.size = readFloat(size, M_PG);
         }
         else if (size.endsWith(M_DP)) {
-            sizeInfo.metric = METRIC_DP;
+            sizeInfo.metric = METRIC_PX;
             sizeInfo.size = readFloat(size, M_DP);
         }
         else if (size.endsWith(M_DP_2)) {
@@ -96,6 +97,11 @@ public class SizeInfo {
         else if (size.endsWith(M_SP)) {
             sizeInfo.metric = METRIC_SP;
             sizeInfo.size = readFloat(size, M_SP);
+        }
+        else if (size.startsWith(M_REFERENCE)) {
+            sizeInfo.metric = METRIC_PX;
+            int resId = Integer.parseInt(size.substring(M_REFERENCE.length()));
+            sizeInfo.size = context.getResources().getDimension(resId);
         }
         else if (size.contains(M_VIEW_RATIO)) {
             sizeInfo.metric = METRIC_VIEW_RATIO;
@@ -146,20 +152,20 @@ public class SizeInfo {
         return metric == METRIC_VIEW_RATIO || metric == METRIC_ALIGN || metric == METRIC_MAX;
     }
 
-    public int measureStaticSize(int totalSize, SizeResolverHost pageSizeProvider) {
+    public int measureStaticSize(int totalSize, SizeResolverHost sizeResolverHost) {
         switch (metric) {
             case METRIC_PX:
                 return (int) size;
             case METRIC_MM:
-                return (int) (size * pageSizeProvider.getScreenDensity() * MM_TO_PX_RATIO);
+                return (int) (size * sizeResolverHost.getScreenDensity() * MM_TO_PX_RATIO);
             case METRIC_PG:
-                return (int) (size * pageSizeProvider.getPgUnitSize());
+                return (int) (size * sizeResolverHost.getPgUnitSize());
             case METRIC_RATIO:
                 return (int) (size * totalSize);
             case METRIC_DP:
-                return (int) (size * pageSizeProvider.getScreenDensity());
+                return (int) (size * sizeResolverHost.getScreenDensity());
             case METRIC_SP:
-                return (int) (size * pageSizeProvider.getScreenScaledDensity());
+                return (int) (size * sizeResolverHost.getScreenScaledDensity());
         }
 
         throw new RuntimeException("Metric value '" + metric + "' is not static.");

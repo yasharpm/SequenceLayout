@@ -4,7 +4,7 @@
     <Horizontal>
 
         <Span size="12pg"/>
-        <Span id="image_icon" size="36pg"/>
+        <Span id="image_icon" size="@dimen/listitem_icon_size"/>
         <Span size="24dp"/>
         <Span id="text_1" size="1w"/>
         <Span size="12pg"/>
@@ -14,7 +14,7 @@
     <Vertical>
 
         <Span size="12pg"/>
-        <Span id="image_icon" size="36pg"/>
+        <Span id="image_icon" size="@dimen/listitem_icon_size"/>
         <Span size="12pg"/>
 
     </Vertical>
