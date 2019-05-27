@@ -15,9 +15,15 @@
 
         <Span size="12pg"/>
         <Span id="image_icon" size="36pg"/>
-        <Span size="8pg"/>
-        <Span id="text_1" size="wrap"/>
         <Span size="12pg"/>
+
+    </Vertical>
+
+    <Vertical start="start@image_icon" end="end@image_icon">
+
+        <Span size="1w"/>
+        <Span id="text_1" size="wrap"/>
+        <Span size="1w"/>
 
     </Vertical>
 
