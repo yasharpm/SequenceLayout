@@ -75,6 +75,9 @@ This resolves to putting the view in the center of the screen as a square of `40
 ### Span sizes cheat sheet
 - `%` Size relative to sequence's total size. Examples: `30%`, `100%`, `-10.5%`, `150%`
 - `px` Size in pixels. Examples: `12px`, `60px`, `-8.5px`
+- `dp` Size in dip. Examples: `8dp`, `12dp`, `36dp`
+- `sp` Size in sp. Examples: `11sp`, `16sp`, `18sp`
+- `@dimen` Size as a reference to dimens. Examples: `@dimen/default_margin`, `@dimen/icon_size`
 - `mm` Size in millimeters. Examples: `10mm`, `1mm`, `0.85mm`
 - `wrap` Wrapping size. Specific to use for views. Is equivalent for the known `wrap_content` behaviour.
 - `%[view_id]` Size percentage relative to another view's size. Examples: `30%view`, `100%text_title`, `-10%image_profile`
@@ -82,5 +85,3 @@ This resolves to putting the view in the center of the screen as a square of `40
 - `pg` Relative to the `pgSize` defined for the SequenceLayout. Meant to be the main sizing unit and to replace `dp` sizes. This allows you to define your layout solely by following the sizes that are given to you by the designers. Examples: `12pg`, `1.5pg`, `-4pg`
 - `w` Weighted size inside of each sequence's scope. After all other sizes have resolved. The remaining space is divided between the weighed spans relative to their weight. If the SequenceLayout is set to horizontal or vertical wrapping, all weighted sizes will be resolved to zero. Examples: `1w`, `20w`, `4.5w`, `-3w`
 - `@MAX(span_size,...)` Resolves to the maximum value of the given span sizes. Note that weighted and aligned sizes are not valid. Examples: `@MAX(48pg,100%text_title,25%image_profile)`, `@MAX(100%view,20%)`
-
-`@MAX` is used in `sample_3` in the sample code. I added the feature to support a behviour questioned in [StackOverFlow](https://stackoverflow.com/questions/55375635/use-androids-constraintlayout-to-create-table-like-view)
