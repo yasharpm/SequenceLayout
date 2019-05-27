@@ -15,7 +15,7 @@ The following animations display the extend of the flexibily available.
 Add the dependency:
 ```Groovy
 dependencies {
-	implementation 'com.yashoid:sequencelayout:1.0.0'
+	implementation 'com.yashoid:sequencelayout:1.1.0'
 }
 ```
 
@@ -81,3 +81,6 @@ This resolves to putting the view in the center of the screen as a square of `40
 - `align@[view_id]` Set the size so that the Span would end at the start of the given id's view. Examples: `align@text_title`, `align@image_profile`
 - `pg` Relative to the `pgSize` defined for the SequenceLayout. Meant to be the main sizing unit and to replace `dp` sizes. This allows you to define your layout solely by following the sizes that are given to you by the designers. Examples: `12pg`, `1.5pg`, `-4pg`
 - `w` Weighted size inside of each sequence's scope. After all other sizes have resolved. The remaining space is divided between the weighed spans relative to their weight. If the SequenceLayout is set to horizontal or vertical wrapping, all weighted sizes will be resolved to zero. Examples: `1w`, `20w`, `4.5w`, `-3w`
+- `@MAX(span_size,...)` Resolves to the maximum value of the given span sizes. Note that weighted and aligned sizes are not valid. Examples: `@MAX(48pg,100%text_title,25%image_profile)`, `@MAX(100%view,20%)`
+
+`@MAX` is used in `sample_3` in the sample code. I added the feature to support a behviour questioned in [StackOverFlow](https://stackoverflow.com/questions/55375635/use-androids-constraintlayout-to-create-table-like-view)
