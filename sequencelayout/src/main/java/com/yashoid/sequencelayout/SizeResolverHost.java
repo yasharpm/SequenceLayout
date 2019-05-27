@@ -12,6 +12,8 @@ public interface SizeResolverHost {
 
     float getScreenDensity();
 
+    float getScreenScaledDensity();
+
     View findViewById(int id);
 
     List<Span> getResolvedSpans();

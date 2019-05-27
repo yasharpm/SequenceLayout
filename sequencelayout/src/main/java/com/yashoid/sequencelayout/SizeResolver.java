@@ -44,6 +44,8 @@ public class SizeResolver {
             case SizeInfo.METRIC_PX:
             case SizeInfo.METRIC_MM:
             case SizeInfo.METRIC_PG:
+            case SizeInfo.METRIC_DP:
+            case SizeInfo.METRIC_SP:
                 return sizeInfo.measureStaticSize(totalSize, mHost);
             case SizeInfo.METRIC_RATIO:
                 return totalSize == -1 ? UNRESOLVABLE_SIZE : sizeInfo.measureStaticSize(totalSize, mHost);

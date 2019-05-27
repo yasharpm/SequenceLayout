@@ -8,22 +8,26 @@ public class SizeInfo {
     public static final int SIZE_WEIGHTED = -1;
 
     // Static metrics
-    public static final int METRIC_PX = 0;
-    public static final int METRIC_MM = 1;
-    public static final int METRIC_PG = 2;
-    public static final int METRIC_RATIO = 3;
+    public static final int METRIC_DP = 0;
+    public static final int METRIC_SP = 1;
+    public static final int METRIC_PX = 2;
+    public static final int METRIC_MM = 3;
+    public static final int METRIC_PG = 4;
+    public static final int METRIC_RATIO = 5;
 
     // Element related metrics
-    public static final int METRIC_VIEW_RATIO = 5;
-    public static final int METRIC_ALIGN = 6;
-    public static final int METRIC_MAX = 7;
+    public static final int METRIC_VIEW_RATIO = 6;
+    public static final int METRIC_ALIGN = 7;
+    public static final int METRIC_MAX = 8;
 
     // Wrapping metric
-    public static final int METRIC_WRAP = 8;
+    public static final int METRIC_WRAP = 9;
 
     // Weighted metric
-    public static final int METRIC_WEIGHT = 9;
+    public static final int METRIC_WEIGHT = 10;
 
+    private static final String M_DP = "dp";
+    private static final String M_SP = "sp";
     private static final String M_WEIGHT = "w";
     private static final String M_RATIO = "%";
     private static final String M_PX = "px";
@@ -80,6 +84,14 @@ public class SizeInfo {
             sizeInfo.metric = METRIC_PG;
             sizeInfo.size = readFloat(size, M_PG);
         }
+        else if (size.endsWith(M_DP)) {
+            sizeInfo.metric = METRIC_DP;
+            sizeInfo.size = readFloat(size, M_DP);
+        }
+        else if (size.endsWith(M_SP)) {
+            sizeInfo.metric = METRIC_SP;
+            sizeInfo.size = readFloat(size, M_SP);
+        }
         else if (size.contains(M_VIEW_RATIO)) {
             sizeInfo.metric = METRIC_VIEW_RATIO;
 
@@ -121,7 +133,8 @@ public class SizeInfo {
     }
 
     public boolean isStatic() {
-        return metric == METRIC_PG || metric == METRIC_PX || metric == METRIC_RATIO || metric == METRIC_MM;
+        return metric == METRIC_DP || metric == METRIC_SP || metric == METRIC_PG ||
+                metric == METRIC_PX || metric == METRIC_RATIO || metric == METRIC_MM;
     }
 
     public boolean isElementRelated() {
@@ -138,6 +151,8 @@ public class SizeInfo {
                 return (int) (size * pageSizeProvider.getPgUnitSize());
             case METRIC_RATIO:
                 return (int) (size * totalSize);
+            case METRIC_DP:
+                return (int) (size * pageSizeProvider.getScreenDensity());
         }
 
         throw new RuntimeException("Metric value '" + metric + "' is not static.");

@@ -50,6 +50,11 @@ class PageResolver implements SizeResolverHost {
         return mView.getResources().getDisplayMetrics().density;
     }
 
+    @Override
+    public float getScreenScaledDensity() {
+        return mView.getResources().getDisplayMetrics().scaledDensity;
+    }
+
     void onSequenceAdded(Sequence sequence) {
         mSequences.add(sequence);
 
