@@ -1,6 +1,7 @@
 package com.yashoid.sequencelayout;
 
 import android.text.TextUtils;
+import android.util.SparseIntArray;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 class PageResolver implements SizeResolverHost {
+
+    private static final int MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN = 50;
 
     private final SequenceLayout mView;
     private final float mPgSize;
@@ -24,6 +27,9 @@ class PageResolver implements SizeResolverHost {
 
     private int mResolvedWidth = -1;
     private int mResolvedHeight = -1;
+
+    private SparseIntArray mIdMap = new SparseIntArray(MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN);
+    private int[] mSizeMap = new int[MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN * 5];
 
     PageResolver(SequenceLayout view) {
         mView = view;
@@ -116,20 +122,43 @@ class PageResolver implements SizeResolverHost {
         mResolvedHeight = maxHeight;
     }
 
-    void layoutViews() { // TODO Improve for real!
+    void layoutViews() {
+        mIdMap.clear();
+
         for (Span unit: mResolvedSpans) {
-            View child = mView.findViewById(unit.elementId);
+            int index = mIdMap.get(unit.elementId, -1);
+
+            if (index == -1) {
+                index = mIdMap.size();
+
+                mIdMap.put(unit.elementId, index);
+            }
 
             if (unit.isHorizontal) {
-                child.layout(unit.getStart(), child.getTop(), unit.getEnd(), child.getBottom());
+                mSizeMap[index * 4] = unit.getStart();
+                mSizeMap[index * 4 + 2] = unit.getEnd();
             }
             else {
-                child.layout(child.getLeft(), unit.getStart(), child.getRight(), unit.getEnd());
+                mSizeMap[index * 4 + 1] = unit.getStart();
+                mSizeMap[index * 4 + 3] = unit.getEnd();
+            }
+        }
+
+        for (int i = 0; i < mIdMap.size(); i++) {
+            View child = mView.findViewById(mIdMap.keyAt(i));
+
+            if (child == null) {
+                continue;
             }
 
-            if (child.getWidth() > 0 && child.getHeight() > 0) {
-                child.measure(View.MeasureSpec.makeMeasureSpec(child.getWidth(), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(child.getHeight(), View.MeasureSpec.EXACTLY));
-            }
+            int index = mIdMap.valueAt(i);
+
+            child.measure(
+                    View.MeasureSpec.makeMeasureSpec(mSizeMap[index * 4 + 2] - mSizeMap[index * 4], View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(mSizeMap[index * 4 + 3] - mSizeMap[index * 4 + 1], View.MeasureSpec.EXACTLY)
+            );
+
+            child.layout(mSizeMap[index * 4], mSizeMap[index * 4 + 1], mSizeMap[index * 4 + 2], mSizeMap[index * 4 + 3]);
         }
     }
 
