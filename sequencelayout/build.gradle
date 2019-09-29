@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/yasharpm/SequenceLayout'
     gitUrl = 'https://github.com/yasharpm/SequenceLayout.git'
 
-    libraryVersion = '1.2.1'
+    libraryVersion = '1.3.0'
 
     developerId = 'yasharpm'
     developerName = 'Yashar PourMohammad'

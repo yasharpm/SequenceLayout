@@ -15,7 +15,7 @@ The following animations display the extend of the flexibily available.
 Add the dependency:
 ```Groovy
 dependencies {
-	implementation 'com.yashoid:sequencelayout:1.2.1'
+	implementation 'com.yashoid:sequencelayout:1.3.0'
 }
 ```
 
@@ -71,6 +71,13 @@ xml/sequences_main
 </Sequences>
 ```
 This resolves to putting the view in the center of the screen as a square of `40pg` size. Which means `width = 40 / 360 * total_width`.
+
+### Span properties
+- `size` Is the size of the span. Multiple types of metrics can be used here.
+- `id` Relates the span size to setting the target view - horizontal or vertical - size.
+- `min` Minimum size for the span. It can have any metric except for weighed sizes.
+- `max` Maximum size for the span. It can have any metric except for weighed sizes.
+- `visibilityElement` Link this spans visibility (size equal to zero) to a view's visibility (being GONE).
 
 ### Span sizes cheat sheet
 - `%` Size relative to sequence's total size. Examples: `30%`, `100%`, `-10.5%`, `150%`
