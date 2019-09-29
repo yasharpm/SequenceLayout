@@ -178,6 +178,9 @@ public class Sequence {
                     if (size != -1) {
                         size = Math.max(min, Math.min(max, size));
                     }
+                    else {
+                        sizeUnresolved = true;
+                    }
                 }
                 else {
                     weightSum += span.size;
