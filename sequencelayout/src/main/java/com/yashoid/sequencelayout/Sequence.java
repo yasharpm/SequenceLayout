@@ -83,6 +83,8 @@ public class Sequence {
 
     private List<Span> mSpans = new ArrayList<>();
     private SparseIntArray mMeasuredSizes = new SparseIntArray(12);
+    private SparseIntArray mMeasuredMins = new SparseIntArray(12);
+    private SparseIntArray mMeasuredMaxs = new SparseIntArray(12);
 
     private SizeResolver mSizeResolver;
 
@@ -154,6 +156,8 @@ public class Sequence {
         int currentPosition = start;
 
         mMeasuredSizes.clear();
+        mMeasuredMins.clear();
+        mMeasuredMaxs.clear();
 
         boolean hasUnresolvedSizes = false;
         boolean hasEncounteredPositionResolutionGap = !boundariesAreKnown;
@@ -164,27 +168,28 @@ public class Sequence {
             int size = -1;
             boolean sizeUnresolved = false;
 
-            if (span.metric == SizeInfo.METRIC_ALIGN) {
-                Span relatedSpan = SpanUtil.find(span.relatedElementId, mIsHorizontal, resolvedSpans);
+            int min = span.min != null ? resolveSizeInfo(span.min, resolvedSpans, hasEncounteredPositionResolutionGap, currentPosition, totalSize) : Integer.MIN_VALUE;
+            int max = span.max != null ? resolveSizeInfo(span.max, resolvedSpans, hasEncounteredPositionResolutionGap, currentPosition, totalSize) : Integer.MAX_VALUE;
 
-                if (!hasEncounteredPositionResolutionGap && relatedSpan != null && relatedSpan.isPositionSet()) {
-                    int targetPosition = relatedSpan.getStart();
+            if (min != -1 && max != -1) {
+                if (span.metric != SizeInfo.METRIC_WEIGHT) {
+                    size = resolveSizeInfo(span, resolvedSpans, hasEncounteredPositionResolutionGap, currentPosition, totalSize);
 
-                    size = targetPosition - currentPosition;
+                    if (size != -1) {
+                        size = Math.max(min, Math.min(max, size));
+                    }
                 }
                 else {
-                    sizeUnresolved = true;
-                }
-            }
-            else if (span.metric != SizeInfo.METRIC_WEIGHT) {
-                size = mSizeResolver.resolveSize(span, mIsHorizontal, totalSize);
+                    weightSum += span.size;
 
-                sizeUnresolved = size == -1;
+                    mMeasuredSizes.put(index, SizeInfo.SIZE_WEIGHTED);
+                }
+
+                mMeasuredMins.put(index, min);
+                mMeasuredMaxs.put(index, max);
             }
             else {
-                weightSum += span.size;
-
-                mMeasuredSizes.put(index, SizeInfo.SIZE_WEIGHTED);
+                sizeUnresolved = true;
             }
 
             if (size != -1) {
@@ -194,11 +199,9 @@ public class Sequence {
                 if (span.elementId != 0) {
                     unresolvedSpans.remove(span);
 
-                    if (span != null) {
-                        span.setResolvedSize(size);
+                    span.setResolvedSize(size);
 
-                        resolvedSpans.add(span);
-                    }
+                    resolvedSpans.add(span);
                 }
 
                 if (!hasEncounteredPositionResolutionGap) {
@@ -235,32 +238,10 @@ public class Sequence {
                     if (!wrapping) {
                         size = (int) (span.size * remainingSize / remainingWeight);
 
-                        if (span.min != null) {
-                            int minSize = mSizeResolver.resolveSize(span.min, mIsHorizontal, totalSize);
-
-                            if (minSize != -1) {
-                                size = Math.max(size, minSize);
-                            }
-                        }
-
-                        if (span.max != null) {
-                            int maxSize = mSizeResolver.resolveSize(span.max, mIsHorizontal, totalSize);
-
-                            if (maxSize != -1) {
-                                size = Math.min(size, maxSize);
-                            }
-                        }
+                        size = Math.max(mMeasuredMins.get(index), Math.min(mMeasuredMaxs.get(index), size));
                     }
                     else {
-                        size = 0;
-
-                        if (span.min != null) {
-                            size = mSizeResolver.resolveSize(span.min, mIsHorizontal, totalSize);
-                        }
-
-                        if (size < 0) {
-                            return -1;
-                        }
+                        size = Math.max(mMeasuredMins.get(index), Math.min(mMeasuredMaxs.get(index), 0));
                     }
 
                     remainingWeight -= span.size;
@@ -284,6 +265,29 @@ public class Sequence {
         }
 
         return start + calculatedSize;
+    }
+
+    private int resolveSizeInfo(SizeInfo sizeInfo, List<Span> resolvedSpans,
+                                boolean hasEncounteredPositionResolutionGap,
+                                int currentPosition, int totalSize) {
+        if (sizeInfo.metric == SizeInfo.METRIC_ALIGN) {
+            Span relatedSpan = SpanUtil.find(sizeInfo.relatedElementId, mIsHorizontal, resolvedSpans);
+
+            if (!hasEncounteredPositionResolutionGap && relatedSpan != null && relatedSpan.isPositionSet()) {
+                int targetPosition = relatedSpan.getStart();
+
+                return targetPosition - currentPosition;
+            }
+            else {
+                return -1;
+            }
+        }
+        else if (sizeInfo.metric != SizeInfo.METRIC_WEIGHT) {
+            return mSizeResolver.resolveSize(sizeInfo, mIsHorizontal, totalSize);
+        }
+        else {
+            return -1;
+        }
     }
 
 }
