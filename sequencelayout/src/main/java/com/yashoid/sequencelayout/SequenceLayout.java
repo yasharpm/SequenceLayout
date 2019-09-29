@@ -40,16 +40,7 @@ public class SequenceLayout extends ViewGroup {
         int sequencesResId = a.getResourceId(R.styleable.SequenceLayout_sequences, 0);
 
         if (sequencesResId != 0) {
-            try {
-                XmlResourceParser parser = getResources().getXml(sequencesResId);
-                List<Sequence> sequences = new SequenceReader(context).readSequences(parser);
-
-                for (Sequence sequence: sequences) {
-                    mPageResolver.onSequenceAdded(sequence);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("Bad sequence file format.", e);
-            }
+            addSequences(sequencesResId);
         }
 
         a.recycle();
@@ -67,6 +58,27 @@ public class SequenceLayout extends ViewGroup {
         return size * getWidth() / mPgSize;
     }
 
+    public List<Sequence> addSequences(int sequencesResId) {
+        try {
+            XmlResourceParser parser = getResources().getXml(sequencesResId);
+            List<Sequence> sequences = new SequenceReader(getContext()).readSequences(parser);
+
+            addSequences(sequences);
+
+            return sequences;
+        } catch (Exception e) {
+            throw new RuntimeException("Bad sequence file.", e);
+        }
+    }
+
+    public void addSequences(List<Sequence> sequences) {
+        for (Sequence sequence: sequences) {
+            mPageResolver.onSequenceAdded(sequence);
+        }
+
+        requestLayout();
+    }
+
     public void addSequence(Sequence sequence) {
         mPageResolver.onSequenceAdded(sequence);
 
@@ -75,6 +87,14 @@ public class SequenceLayout extends ViewGroup {
 
     public void removeSequence(Sequence sequence) {
         mPageResolver.onSequenceRemoved(sequence);
+
+        requestLayout();
+    }
+
+    public void removeSequences(List<Sequence> sequences) {
+        for (Sequence sequence: sequences) {
+            mPageResolver.onSequenceRemoved(sequence);
+        }
 
         requestLayout();
     }
