@@ -15,6 +15,8 @@ public class SequenceLayout extends ViewGroup {
 
     private float mPgSize;
 
+    private int mPgAffectiveWidth;
+
     public SequenceLayout(Context context) {
         super(context);
         initialize(context, null, 0);
@@ -44,10 +46,18 @@ public class SequenceLayout extends ViewGroup {
         }
 
         a.recycle();
+
+        mPgAffectiveWidth = getResources().getDisplayMetrics().widthPixels;
     }
 
     public float getPgSize() {
         return mPgSize;
+    }
+
+    public void setPgSize(float size) {
+        mPgSize = size;
+
+        requestLayout();
     }
 
     public float resolveSize(float size) {
@@ -55,7 +65,7 @@ public class SequenceLayout extends ViewGroup {
             return size;
         }
 
-        return size * getWidth() / mPgSize;
+        return size * mPgAffectiveWidth / mPgSize;
     }
 
     public List<Sequence> addSequences(int sequencesResId) {
@@ -116,6 +126,8 @@ public class SequenceLayout extends ViewGroup {
         widthSize = getSize(widthMode, widthSize, dm.widthPixels);
         heightSize = getSize(heightMode, heightSize, dm.heightPixels);
 
+        mPgAffectiveWidth = widthSize;
+
         mPageResolver.startResolution(widthSize, heightSize, widthMode == MeasureSpec.UNSPECIFIED, heightMode == MeasureSpec.UNSPECIFIED);
 
         setMeasuredDimension(mPageResolver.getResolvedWidth(), mPageResolver.getResolvedHeight());
@@ -134,6 +146,8 @@ public class SequenceLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        mPgAffectiveWidth = getWidth();
+
         mPageResolver.layoutViews();
     }
 
