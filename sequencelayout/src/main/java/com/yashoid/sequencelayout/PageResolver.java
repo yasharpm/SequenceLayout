@@ -13,7 +13,7 @@ class PageResolver implements SizeResolverHost {
     private static final int MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN = 50;
 
     private final SequenceLayout mView;
-    private final float mPgSize;
+    private float mPgSize;
 
     private List<Sequence> mSequences = new ArrayList<>();
 
@@ -33,8 +33,6 @@ class PageResolver implements SizeResolverHost {
 
     PageResolver(SequenceLayout view) {
         mView = view;
-
-        mPgSize = mView.getPgSize();
     }
 
     @Override
@@ -85,6 +83,8 @@ class PageResolver implements SizeResolverHost {
     }
 
     void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
+        mPgSize = mView.getPgSize();
+
         mResolvingWidth = pageWidth;
         mResolvingHeight = pageHeight;
 
