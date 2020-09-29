@@ -77,7 +77,9 @@ public class SequenceLayout extends ViewGroup {
 
             return sequences;
         } catch (Exception e) {
-            throw new RuntimeException("Bad sequence file.", e);
+            String resourceName = getResources().getResourceName(sequencesResId);
+
+            throw new RuntimeException("Bad sequence file '" + resourceName + "'.", e);
         }
     }
 

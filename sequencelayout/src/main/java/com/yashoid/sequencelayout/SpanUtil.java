@@ -7,7 +7,7 @@ class SpanUtil {
     private static final Span span = new Span();
 
     static Span find(int targetId, boolean horizontal, List<Span> spanList) {
-        span.elementId = targetId;
+        span.viewId = targetId;
         span.isHorizontal = horizontal;
 
         int index = spanList.indexOf(span);

@@ -45,7 +45,7 @@ public class SizeInfo {
 
     public static void readSizeInfo(String size, SizeInfo sizeInfo, Context context) {
         if (TextUtils.isEmpty(size)) {
-            throw new RuntimeException("Size is empty");
+            throw new IllegalArgumentException("Size is empty");
         }
 
         sizeInfo.encoded = size;
@@ -60,7 +60,12 @@ public class SizeInfo {
             for (int i = 0; i < rawSizeInfoArr.length; i++) {
                 sizeInfo.relations[i] = new SizeInfo();
 
-                readSizeInfo(rawSizeInfoArr[i], sizeInfo.relations[i], context);
+                try {
+                    readSizeInfo(rawSizeInfoArr[i], sizeInfo.relations[i], context);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Invalid max syntax. Separate each size " +
+                            "with a comma and no extra spaces.", e);
+                }
             }
         }
         else if (size.endsWith(M_WRAP)) {
@@ -117,15 +122,20 @@ public class SizeInfo {
             sizeInfo.relatedElementId = resolveViewId(size.substring(M_ALIGN.length()), context);
         }
         else {
-            throw new RuntimeException("Unrecognized size info.");
+            throw new IllegalArgumentException("Unrecognized size info '" + size + "'.");
         }
     }
 
     private static float readFloat(String size, String suffix) {
-        return Float.parseFloat(size.substring(0, size.length() - suffix.length()));
+        try {
+            return Float.parseFloat(size.substring(0, size.length() - suffix.length()));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Expected a float value followed by " + suffix + ".",
+                    e);
+        }
     }
 
-    public int elementId = 0;
+    public int viewId = 0;
 
     public float size;
     public int metric = METRIC_WRAP;
@@ -177,14 +187,23 @@ public class SizeInfo {
     }
 
     public static int resolveViewId(String idName, Context context) {
-        if (!idName.contains("/")) {
-            idName = "@id/" + idName;
+        if (idName.startsWith("@id/")) {
+            // Everything is fine.
         }
-        else {
+        else if (idName.startsWith("@+id/")) {
             idName = idName.replace("+", "");
         }
+        else {
+            idName = "@id/" + idName;
+        }
 
-        return context.getResources().getIdentifier(idName, null, context.getPackageName());
+        int viewId = context.getResources().getIdentifier(idName, null, context.getPackageName());
+
+        if (viewId == 0) {
+            throw new IllegalArgumentException("Resource with id " + idName + " not found.");
+        }
+
+        return viewId;
     }
 
 }

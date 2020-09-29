@@ -21,7 +21,7 @@ public class SequenceReader {
     private static final String SEQUENCE_START = "start";
     private static final String SEQUENCE_END = "end";
 
-    private static final String SPAN = "Span";
+    static final String SPAN = "Span";
 
     private Context mContext;
 
@@ -35,7 +35,12 @@ public class SequenceReader {
         parser.next();
         parser.next();
 
-        parser.require(XmlPullParser.START_TAG, NS, SEQUENCES);
+        try {
+            parser.require(XmlPullParser.START_TAG, NS, SEQUENCES);
+        } catch (XmlPullParserException e) {
+            throw new SequenceSyntaxException("Sequences xml file must have a '" + SEQUENCES +
+                    "' tag as root.");
+        }
 
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -51,7 +56,10 @@ public class SequenceReader {
                 sequences.add(readSequence(parser, false));
             }
             else {
-                skip(parser);
+                // skip(parser);
+                throw new SequenceSyntaxException("Line " + parser.getLineNumber() + ": Under " +
+                        SEQUENCES + " tag only " + SEQUENCE_HORIZONTAL + " and " +
+                        SEQUENCE_VERTICAL + " are allowed.");
             }
         }
 
@@ -62,8 +70,8 @@ public class SequenceReader {
         parser.require(XmlPullParser.START_TAG, NS, horizontal ? SEQUENCE_HORIZONTAL : SEQUENCE_VERTICAL);
 
         String id = null;
-        String start = "start@";
-        String end = "end@";
+        String start = Sequence.SEQUENCE_EDGE_START + "@";
+        String end = Sequence.SEQUENCE_EDGE_END + "@";
 
         int attrCount = parser.getAttributeCount();
 
@@ -79,24 +87,39 @@ public class SequenceReader {
             else if (SEQUENCE_END.equals(attrName)) {
                 end = parser.getAttributeValue(i);
             }
+            else {
+                throw new SequenceSyntaxException("Line " + parser.getLineNumber() +
+                        ": Unrecognized attribute '" + attrName + "'. Expected either " +
+                        SEQUENCE_ID + ", " + SEQUENCE_START + " or " + SEQUENCE_END + ".");
+            }
         }
 
-        Sequence sequence = new Sequence(id, horizontal, start, end, mContext);
+        Sequence sequence = null;
 
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
+        try {
+            sequence = new Sequence(id, horizontal, start, end, mContext);
+
+            while (parser.next() != XmlPullParser.END_TAG) {
+                if (parser.getEventType() != XmlPullParser.START_TAG) {
+                    continue;
+                }
+
+                String name = parser.getName();
+
+                if (SPAN.equals(name)) {
+                    Span span = new Span(parser, horizontal, mContext);
+
+                    sequence.addSpan(span);
+                }
+                else {
+                    throw new SequenceSyntaxException("Line " + parser.getLineNumber() + ": " +
+                            "Only " + SPAN + " tag is expected inside a sequence.");
+                }
+
+                skip(parser);
             }
-
-            String name = parser.getName();
-
-            if (SPAN.equals(name)) {
-                Span span = new Span(parser, horizontal, mContext);
-
-                sequence.addSpan(span);
-            }
-
-            skip(parser);
+        } catch (IllegalArgumentException e) {
+            throw new SequenceSyntaxException("Exception at line " + parser.getLineNumber(), e);
         }
 
         return sequence;

@@ -126,12 +126,12 @@ class PageResolver implements SizeResolverHost {
         mIdMap.clear();
 
         for (Span unit: mResolvedSpans) {
-            int index = mIdMap.get(unit.elementId, -1);
+            int index = mIdMap.get(unit.viewId, -1);
 
             if (index == -1) {
                 index = mIdMap.size();
 
-                mIdMap.put(unit.elementId, index);
+                mIdMap.put(unit.viewId, index);
             }
 
             if (unit.isHorizontal) {

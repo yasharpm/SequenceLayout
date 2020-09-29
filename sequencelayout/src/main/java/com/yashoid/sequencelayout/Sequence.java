@@ -8,6 +8,9 @@ import java.util.List;
 
 public class Sequence {
 
+    static final String SEQUENCE_EDGE_START = "start";
+    static final String SEQUENCE_EDGE_END = "end";
+
     public static class SequenceEdge {
 
         public static SequenceEdge read(String definition, Context context) {
@@ -16,7 +19,7 @@ public class Sequence {
 
             int atIndex = definition.indexOf("@");
 
-            String targetRawId = definition.substring(atIndex + 1);
+            String targetRawId = atIndex == -1 ? "" : definition.substring(atIndex + 1);
 
             if (targetRawId.isEmpty()) {
                 targetId = 0;
@@ -25,17 +28,23 @@ public class Sequence {
                 targetId = SizeInfo.resolveViewId(targetRawId, context);
             }
 
-            String portion = definition.substring(0, atIndex);
+            String portion = definition.substring(0, atIndex == -1 ? definition.length() : atIndex);
 
             switch (portion) {
-                case "start":
+                case SEQUENCE_EDGE_START:
                     portionValue = 0;
                     break;
-                case "end":
+                case SEQUENCE_EDGE_END:
                     portionValue = 1;
                     break;
                 default:
-                    portionValue = Float.parseFloat(portion) / 100f;
+                    try {
+                        portionValue = Float.parseFloat(portion) / 100f;
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("Invalid edge portion value '" +
+                                portion + "'. Valid portion values are " + SEQUENCE_EDGE_START +
+                                ", " + SEQUENCE_EDGE_END + " or a float number.", e);
+                    }
                     break;
             }
 
@@ -199,7 +208,7 @@ public class Sequence {
                 mMeasuredSizes.put(index, size);
                 calculatedSize += size;
 
-                if (span.elementId != 0) {
+                if (span.viewId != 0) {
                     unresolvedSpans.remove(span);
 
                     span.setResolvedSize(size);
@@ -251,7 +260,7 @@ public class Sequence {
                     remainingSize -= size;
                 }
 
-                if (span.elementId != 0) {
+                if (span.viewId != 0) {
                     unresolvedSpans.remove(span);
 
                     span.setResolvedSize(size);

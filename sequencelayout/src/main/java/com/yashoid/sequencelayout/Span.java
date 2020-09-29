@@ -10,7 +10,7 @@ public class Span extends SizeInfo {
     private static final String SIZE = "size";
     private static final String MIN = "min";
     private static final String MAX = "max";
-    private static final String VISIBILITY_ELEMENT = "visibilityElement";
+    private static final String VISIBLE_IF = "visibleIf";
 
     public boolean isHorizontal;
 
@@ -28,14 +28,17 @@ public class Span extends SizeInfo {
 
         final int attrCount = parser.getAttributeCount();
 
+        boolean hasSize = false;
+
         for (int i = 0; i < attrCount; i++) {
             String name = parser.getAttributeName(i);
 
             switch (name) {
                 case ID:
-                    elementId = resolveViewId(parser.getAttributeValue(i), context);
+                    viewId = resolveViewId(parser.getAttributeValue(i), context);
                     continue;
                 case SIZE:
+                    hasSize = true;
                     readSizeInfo(parser.getAttributeValue(i), this, context);
                     continue;
                 case MIN:
@@ -43,7 +46,8 @@ public class Span extends SizeInfo {
                     readSizeInfo(parser.getAttributeValue(i), min, context);
 
                     if (min.metric == METRIC_WEIGHT) {
-                        throw new IllegalArgumentException("Weighted size is illegal.");
+                        throw new SequenceSyntaxException("Line " + parser.getLineNumber() +
+                                ": Weighted size is not allowed as min size.");
                     }
 
                     continue;
@@ -52,24 +56,33 @@ public class Span extends SizeInfo {
                     readSizeInfo(parser.getAttributeValue(i), max, context);
 
                     if (max.metric == METRIC_WEIGHT) {
-                        throw new IllegalArgumentException("Weighted size is illegal.");
+                        throw new SequenceSyntaxException("Line " + parser.getLineNumber() +
+                                ": Weighted size is not allowed as max size.");
                     }
 
                     continue;
-                case VISIBILITY_ELEMENT:
+                case VISIBLE_IF:
                     visibilityElement = resolveViewId(parser.getAttributeValue(i), context);
                     continue;
                 default:
-                    continue;
+                    throw new SequenceSyntaxException("Line " + parser.getLineNumber() + ": " +
+                            "Invalid " + SequenceReader.SPAN + " attribute '" + name + "'. " +
+                            "Valid attributes are " + ID + ", " + SIZE + ", " + MIN + ", " +
+                            MAX + " and " + VISIBLE_IF + ".");
             }
         }
 
+        if (!hasSize) {
+            throw new SequenceSyntaxException("Line " + parser.getLineNumber() +
+                    ": Span has no size");
+        }
+
         if (min != null) {
-            min.elementId = elementId;
+            min.viewId = viewId;
         }
 
         if (max != null) {
-            max.elementId = elementId;
+            max.viewId = viewId;
         }
     }
 
@@ -121,8 +134,8 @@ public class Span extends SizeInfo {
 
         Span span = (Span) obj;
 
-        if (elementId != 0 && span.elementId != 0) {
-            return span.elementId == elementId && span.isHorizontal == isHorizontal;
+        if (viewId != 0 && span.viewId != 0) {
+            return span.viewId == viewId && span.isHorizontal == isHorizontal;
         }
         else {
             return this == obj;

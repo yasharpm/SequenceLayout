@@ -10,7 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,10 +19,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SampleActivity">
+        <activity android:name=".SampleActivity"
+            android:screenOrientation="portrait">
         </activity>
 
-        <activity android:name=".ListActivity"></activity>
+        <activity android:name=".ListActivity"
+            android:screenOrientation="portrait">
+        </activity>
 
     </application>
 

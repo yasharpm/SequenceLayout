@@ -22,7 +22,7 @@ public class SizeResolver {
         final List<Span> resolvedSpans = mHost.getResolvedSpans();
         final List<Span> unresolvedSpans = mHost.getUnresolvedSpans();
 
-        View view = sizeInfo.elementId == 0 ? null : mHost.findViewById(sizeInfo.elementId);
+        View view = sizeInfo.viewId == 0 ? null : mHost.findViewById(sizeInfo.viewId);
 
         if (sizeInfo instanceof Span) {
             if (view != null && view.getVisibility() == View.GONE) {
@@ -72,29 +72,29 @@ public class SizeResolver {
 
                 return max;
             case SizeInfo.METRIC_WRAP:
-                if (sizeInfo.elementId == 0) {
+                if (sizeInfo.viewId == 0) {
                     return 0;
                 }
 
-                Span thisDirection = SpanUtil.find(sizeInfo.elementId, isHorizontal, resolvedSpans);
+                Span thisDirection = SpanUtil.find(sizeInfo.viewId, isHorizontal, resolvedSpans);
 
                 if (thisDirection != null) {
                     return thisDirection.getResolvedSize();
                 }
 
-                thisDirection = SpanUtil.find(sizeInfo.elementId, isHorizontal, unresolvedSpans);
+                thisDirection = SpanUtil.find(sizeInfo.viewId, isHorizontal, unresolvedSpans);
 
                 if (thisDirection == null) {
-                    throw new RuntimeException("Referenced element(" + sizeInfo.elementId + ") not found in unresovled units.");
+                    throw new RuntimeException("Referenced element(" + sizeInfo.viewId + ") not found in unresovled units.");
                 }
 
-                Span otherDirection = SpanUtil.find(sizeInfo.elementId, !isHorizontal, resolvedSpans);
+                Span otherDirection = SpanUtil.find(sizeInfo.viewId, !isHorizontal, resolvedSpans);
 
                 if (otherDirection == null) {
-                    otherDirection = SpanUtil.find(sizeInfo.elementId, !isHorizontal, unresolvedSpans);
+                    otherDirection = SpanUtil.find(sizeInfo.viewId, !isHorizontal, unresolvedSpans);
 
                     if (otherDirection == null) {
-                        throw new RuntimeException("Other direction not found for referenced view(" + sizeInfo.elementId + ").");
+                        throw new RuntimeException("Other direction not found for referenced view(" + sizeInfo.viewId + ").");
                     }
                 }
 
