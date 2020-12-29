@@ -20,7 +20,7 @@ dependencies {
 ```
 
 ## How to use this library
-SequenceLayout is based on two core consepts:
+SequenceLayout is based on two core concepts:
 - `Span`: Is an extend definition. In contrast to other layouts, margins and spaces are treated as sizing entities same as view dimensions. Each Span has a `size`, optional `min` and `max` for size limits, optional `id` to assign it to a view's horizontal or vertical extend, and an optional `visibilityElement` which means the size should be resolved to zero if the visibility element's visibility is set to `View.GONE`.
 - Sequence: Is a sequence of spans that resolves the extends (Spans) to actual positions on the screen. For `Vertical` sequences the first span is positioned from 0 to the span's resolved size. The next span's position starts after the previous span end position. Same is valid for `Horizontal` sequences from left to right (from x equal to zero).
 
@@ -36,7 +36,8 @@ layout/activity_main.xml
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    app:pgSize="360"
+    app:pageWidth="375"
+    app:pageHeight="667"
     app:sequences="@xml/sequences_main">
 
     <View
@@ -58,13 +59,13 @@ xml/sequences_main
   
   <Horizontal>
     <Span size="1w"/>
-    <Span id="@id/view" size="40pg"/>
+    <Span id="@id/view" size="40pw"/>
     <Span size="1w"/>
   </Horizontal>
                 
   <Vertical>
     <Span size="1w"/>
-    <Span id="@id/view" size="40pg"/>
+    <Span id="@id/view" size="40ph"/>
     <Span size="1w"/>
   </Vertical>
   
@@ -89,6 +90,7 @@ This resolves to putting the view in the center of the screen as a square of `40
 - `wrap` Wrapping size. Specific to use for views. Is equivalent for the known `wrap_content` behaviour.
 - `%[view_id]` Size percentage relative to another view's size. Examples: `30%view`, `100%text_title`, `-10%image_profile`
 - `align@[view_id]` Set the size so that the Span would end at the start of the given id's view. Examples: `align@text_title`, `align@image_profile`
-- `pg` Relative to the `pgSize` defined for the SequenceLayout. Meant to be the main sizing unit and to replace `dp` sizes. This allows you to define your layout solely by following the sizes that are given to you by the designers. Examples: `12pg`, `1.5pg`, `-4pg`
+- `pw` Relative to the `pageWidth` defined for the SequenceLayout. Meant to be the main sizing unit and to replace `dp` sizes. This allows you to define your layout solely by following the sizes that are given to you by the designers. Examples: `12pw`, `1.5pw`, `-4pw`
+- `ph` Relative to the `pageHeight` defined for the SequenceLayout. Works similar to `pw` but allows you to better adjust the height of your views.  Examples: `12ph`, `1.5ph`, `-4ph`
 - `w` Weighted size inside of each sequence's scope. After all other sizes have resolved. The remaining space is divided between the weighed spans relative to their weight. If the SequenceLayout is set to horizontal or vertical wrapping, all weighted sizes will be resolved to zero. Examples: `1w`, `20w`, `4.5w`, `-3w`
 - `@MAX(span_size,...)` Resolves to the maximum value of the given span sizes. Note that weighted and aligned sizes are not valid. Examples: `@MAX(48pg,100%text_title,25%image_profile)`, `@MAX(100%view,20%)`

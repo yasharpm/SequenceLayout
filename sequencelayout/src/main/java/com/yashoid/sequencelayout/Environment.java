@@ -5,7 +5,8 @@ public interface Environment {
     float getScreenDensity();
     float getScreenScaledDensity();
 
-    float getPgSize();
+    float getPageWidth();
+    float getPageHeight();
 
     boolean readSizeInfo(String src, SizeInfo dst);
 

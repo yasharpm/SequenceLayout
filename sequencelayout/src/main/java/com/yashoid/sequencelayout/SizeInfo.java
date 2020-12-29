@@ -9,19 +9,20 @@ public class SizeInfo {
     public static final int METRIC_SP = 1;
     public static final int METRIC_PX = 2;
     public static final int METRIC_MM = 3;
-    public static final int METRIC_PG = 4;
-    public static final int METRIC_RATIO = 5;
+    public static final int METRIC_PW = 4;
+    public static final int METRIC_PH = 5;
+    public static final int METRIC_RATIO = 6;
 
     // Element related metrics
-    public static final int METRIC_VIEW_RATIO = 6;
-    public static final int METRIC_ALIGN = 7;
-    public static final int METRIC_MAX = 8;
+    public static final int METRIC_VIEW_RATIO = 7;
+    public static final int METRIC_ALIGN = 8;
+    public static final int METRIC_MAX = 9;
 
     // Wrapping metric
-    public static final int METRIC_WRAP = 9;
+    public static final int METRIC_WRAP = 10;
 
     // Weighted metric
-    public static final int METRIC_WEIGHT = 10;
+    public static final int METRIC_WEIGHT = 11;
 
     private static final String M_DP = "dp";
     private static final String M_DP_2 = "dip";
@@ -30,7 +31,8 @@ public class SizeInfo {
     private static final String M_RATIO = "%";
     private static final String M_PX = "px";
     private static final String M_MM = "mm";
-    private static final String M_PG = "pg";
+    private static final String M_PW = "pw";
+    private static final String M_PH = "ph";
     private static final String M_WRAP = "wrap";
     private static final String M_VIEW_RATIO = "%";
     private static final String M_ALIGN = "align@";
@@ -83,9 +85,13 @@ public class SizeInfo {
             sizeInfo.metric = METRIC_MM;
             sizeInfo.size = readFloat(size, M_MM);
         }
-        else if (size.endsWith(M_PG)) {
-            sizeInfo.metric = METRIC_PG;
-            sizeInfo.size = readFloat(size, M_PG);
+        else if (size.endsWith(M_PW)) {
+            sizeInfo.metric = METRIC_PW;
+            sizeInfo.size = readFloat(size, M_PW);
+        }
+        else if (size.endsWith(M_PH)) {
+            sizeInfo.metric = METRIC_PH;
+            sizeInfo.size = readFloat(size, M_PH);
         }
         else if (size.endsWith(M_DP)) {
             sizeInfo.metric = METRIC_PX;
@@ -147,8 +153,9 @@ public class SizeInfo {
     }
 
     public boolean isStatic() {
-        return metric == METRIC_DP || metric == METRIC_SP || metric == METRIC_PG ||
-                metric == METRIC_PX || metric == METRIC_RATIO || metric == METRIC_MM;
+        return metric == METRIC_DP || metric == METRIC_SP || metric == METRIC_PW ||
+                metric == METRIC_PH || metric == METRIC_PX || metric == METRIC_RATIO ||
+                metric == METRIC_MM;
     }
 
     public boolean isElementRelated() {
@@ -161,8 +168,10 @@ public class SizeInfo {
                 return (int) size;
             case METRIC_MM:
                 return (int) (size * sizeResolverHost.getScreenDensity() * MM_TO_PX_RATIO);
-            case METRIC_PG:
-                return (int) (size * sizeResolverHost.getPgUnitSize());
+            case METRIC_PW:
+                return (int) (size * sizeResolverHost.getPageWidthUnitSize());
+            case METRIC_PH:
+                return (int) (size * sizeResolverHost.getPageHeightUnitSize());
             case METRIC_RATIO:
                 return (int) (size * totalSize);
             case METRIC_DP:

@@ -34,7 +34,6 @@ public class SampleActivity extends AppCompatActivity {
 
         SequenceLayout layout = null;
 
-        // TODO pgWidth & pgHeight
         // TODO "50%w viewId"
         // TODO Animation
 

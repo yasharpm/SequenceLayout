@@ -18,7 +18,8 @@ public class SequenceLayout extends ViewGroup implements Environment {
 
     private PageResolver mPageResolver;
 
-    private float mPgSize;
+    private float mPageWidth;
+    private float mPageHeight;
 
     private int mPgAffectiveWidth;
 
@@ -42,7 +43,8 @@ public class SequenceLayout extends ViewGroup implements Environment {
     private void initialize(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SequenceLayout, defStyleAttr, 0);
 
-        mPgSize = a.getFloat(R.styleable.SequenceLayout_pgSize, 0);
+        mPageWidth = a.getFloat(R.styleable.SequenceLayout_pageWidth, 0);
+        mPageHeight = a.getFloat(R.styleable.SequenceLayout_pageHeight, 0);
 
         mPageResolver = new PageResolver(this);
 
@@ -68,8 +70,13 @@ public class SequenceLayout extends ViewGroup implements Environment {
     }
 
     @Override
-    public float getPgSize() {
-        return mPgSize;
+    public float getPageWidth() {
+        return mPageWidth;
+    }
+
+    @Override
+    public float getPageHeight() {
+        return mPageHeight;
     }
 
     @Override
@@ -168,18 +175,23 @@ public class SequenceLayout extends ViewGroup implements Environment {
         measuredSize[1] = view.getMeasuredHeight();
     }
 
-    public void setPgSize(float size) {
-        mPgSize = size;
+    public void setPageSize(float width, float height) {
+        mPageWidth = width;
+        mPageHeight = height;
 
         requestLayout();
     }
 
-    public float resolveSize(float size) {
-        if (mPgSize == 0) {
-            return size;
-        }
+    public void setPageWidth(float width) {
+        mPageWidth = width;
 
-        return size * mPgAffectiveWidth / mPgSize;
+        requestLayout();
+    }
+
+    public void setPageHeight(float height) {
+        mPageHeight = height;
+
+        requestLayout();
     }
 
     public List<Sequence> addSequences(int sequencesResId) {

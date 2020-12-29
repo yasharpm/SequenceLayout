@@ -3,7 +3,8 @@
 
     <declare-styleable name="SequenceLayout">
         <attr name="sequences" format="reference"/>
-        <attr name="pgSize" format="float"/>
+        <attr name="pageWidth" format="float"/>
+        <attr name="pageHeight" format="float"/>
     </declare-styleable>
 
 </resources>

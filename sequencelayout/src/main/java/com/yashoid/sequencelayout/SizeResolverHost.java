@@ -2,9 +2,8 @@ package com.yashoid.sequencelayout;
 
 public interface SizeResolverHost {
 
-    float getPgSize();
-
-    float getPgUnitSize();
+    float getPageWidthUnitSize();
+    float getPageHeightUnitSize();
 
     float getScreenDensity();
 

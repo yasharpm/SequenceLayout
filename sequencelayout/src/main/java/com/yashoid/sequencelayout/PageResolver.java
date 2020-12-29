@@ -12,7 +12,9 @@ class PageResolver implements SizeResolverHost {
     private static final int MAXIMUM_EXPECTED_NUMBER_OF_SPANS = MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN * 3;
 
     private final Environment mEnvironment;
-    private float mPgSize;
+
+    private float mPageWidth;
+    private float mPageHeight;
 
     private List<Sequence> mSequences = new ArrayList<>();
 
@@ -35,17 +37,21 @@ class PageResolver implements SizeResolverHost {
     }
 
     @Override
-    public float getPgSize() {
-        return mPgSize;
-    }
-
-    @Override
-    public float getPgUnitSize() {
-        if (mPgSize == 0) {
+    public float getPageWidthUnitSize() {
+        if (mPageWidth == 0) {
             return 1;
         }
 
-        return mResolvingWidth / mPgSize;
+        return mResolvingWidth / mPageWidth;
+    }
+
+    @Override
+    public float getPageHeightUnitSize() {
+        if (mPageHeight == 0) {
+            return 1;
+        }
+
+        return mResolvingHeight / mPageHeight;
     }
 
     @Override
@@ -101,7 +107,8 @@ class PageResolver implements SizeResolverHost {
     }
 
     public void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
-        mPgSize = mEnvironment.getPgSize();
+        mPageWidth = mEnvironment.getPageWidth();
+        mPageHeight = mEnvironment.getPageHeight();
 
         mResolvingWidth = pageWidth;
         mResolvingHeight = pageHeight;
