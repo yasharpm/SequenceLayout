@@ -173,6 +173,8 @@ class PageResolver implements SizeResolverHost {
         int maxWidth = -1;
         int maxHeight = -1;
 
+        unresolvedSpanCount = mUnresolvedSpans.size();
+
         while (!mUnresolvedSequences.isEmpty()) {
             ListIterator<Sequence> iterator = mUnresolvedSequences.listIterator();
 
@@ -191,6 +193,13 @@ class PageResolver implements SizeResolverHost {
 
                     iterator.remove();
                 }
+            }
+
+            int remainingUnresolvedSpans = mUnresolvedSpans.size();
+
+            if (unresolvedSpanCount == remainingUnresolvedSpans) {
+                // We have an unresolvable situation here.
+                throw new RuntimeException("Sequences definitions are interrelated and unresolvable. Check 'mUnresolvedSpans' to investigate.");
             }
         }
 
