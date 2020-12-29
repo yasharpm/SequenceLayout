@@ -8,7 +8,7 @@
 
     android:background="@drawable/background"
 
-    app:pgSize="560"
+    app:pageWidth="560"
     app:sequences="@xml/sequences_sample_3">
 
     <View

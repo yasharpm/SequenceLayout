@@ -34,7 +34,7 @@ public class SampleActivity extends AppCompatActivity {
 
         SequenceLayout layout = null;
 
-        // TODO "50%w viewId"
+        // TODO Loop break
         // TODO Animation
 
         // This is for the future. Too much interpolator?

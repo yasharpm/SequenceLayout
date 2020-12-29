@@ -2,55 +2,55 @@
 <Sequences>
 
     <Vertical id="spine">
-        <Span size="32pg"/>
+        <Span size="32pw"/>
         <Span id="text_title" size="wrap"/>
-        <Span size="20pg"/>
+        <Span size="20pw"/>
         <Span size="20w"/>
-        <Span id="image_profile" size="220w" min="120pg"/>
-        <Span size="16pg"/>
+        <Span id="image_profile" size="220w" min="120pw"/>
+        <Span size="16pw"/>
         <Span size="16w"/>
         <Span id="text_name" size="wrap"/>
-        <Span size="8pg"/>
+        <Span size="8pw"/>
         <Span size="8w"/>
         <Span id="text_age" size="wrap"/>
-        <Span size="16pg"/>
+        <Span size="16pw"/>
         <Span size="32w"/>
-        <Span id="button_chat" size="70pg"/>
-        <Span size="12pg"/>
+        <Span id="button_chat" size="70pw"/>
+        <Span size="12pw"/>
         <Span size="28w"/>
-        <Span id="helper_followers_start" size="6pg"/>
+        <Span id="helper_followers_start" size="6pw"/>
         <Span size="22w"/>
         <Span id="text_following_title" size="wrap"/>
         <Span size="4w"/>
         <Span id="text_following" size="wrap"/>
         <Span size="22w"/>
-        <Span id="helper_followers_end" size="6pg"/>
-        <Span size="16pg"/>
+        <Span id="helper_followers_end" size="6pw"/>
+        <Span size="16pw"/>
         <Span size="36w"/>
         <Span id="text_about" size="wrap"/>
-        <Span size="4pg"/>
+        <Span size="4pw"/>
         <Span size="4w"/>
-        <Span id="divider_about" size="1pg"/>
-        <Span size="15pg"/>
+        <Span id="divider_about" size="1pw"/>
+        <Span size="15pw"/>
         <Span size="15w"/>
         <Span id="text_about_content" size="wrap"/>
-        <Span size="20pg"/>
+        <Span size="20pw"/>
         <Span size="20w"/>
     </Vertical>
 
     <Horizontal>
-        <Span size="30pg"/>
-        <Span id="image_config" size="34pg"/>
+        <Span size="30pw"/>
+        <Span id="image_config" size="34pw"/>
         <Span size="1w"/>
         <Span id="text_title" size="wrap"/>
         <Span size="1w"/>
         <Span id="image_settings" size="100%image_config"/>
-        <Span size="30pg"/>
+        <Span size="30pw"/>
     </Horizontal>
 
     <Vertical start="start@text_title" end="end@text_title">
         <Span size="1w"/>
-        <Span id="image_config" size="34pg"/>
+        <Span id="image_config" size="34pw"/>
         <Span size="1w"/>
     </Vertical>
 
@@ -62,7 +62,7 @@
 
     <Horizontal>
         <Span size="1w"/>
-        <Span id="image_profile" size="wrap"/>
+        <Span id="image_profile" size="100%h image_profile"/>
         <Span size="1w"/>
     </Horizontal>
 
@@ -75,9 +75,9 @@
     <Horizontal>
         <Span size="1w"/>
         <Span id="text_status" size="wrap"/>
-        <Span size="20pg"/>
-        <Span id="divider_status" size="2pg"/>
-        <Span size="20pg"/>
+        <Span size="20pw"/>
+        <Span id="divider_status" size="2pw"/>
+        <Span size="20pw"/>
         <Span id="text_age" size="wrap"/>
         <Span size="1w"/>
     </Horizontal>
@@ -94,7 +94,7 @@
 
     <Horizontal>
         <Span size="1w"/>
-        <Span id="button_call" size="70pg"/>
+        <Span id="button_call" size="70pw"/>
         <Span size="1.5w"/>
         <Span id="button_chat" size="100%button_call"/>
         <Span size="1.5w"/>
@@ -120,7 +120,7 @@
 
     <Horizontal>
         <Span size="1w"/>
-        <Span id="divider_followers" size="1pg"/>
+        <Span id="divider_followers" size="1pw"/>
         <Span size="1w"/>
     </Horizontal>
 

@@ -23,17 +23,35 @@ public class SizeResolver {
             }
         }
 
+        Span relatedSpan = null;
+        boolean relatedSpanResolved = false;
+
         switch (sizeInfo.metric) {
             case SizeInfo.METRIC_PX:
             case SizeInfo.METRIC_MM:
-            case SizeInfo.METRIC_PG:
+            case SizeInfo.METRIC_PW:
+            case SizeInfo.METRIC_PH:
             case SizeInfo.METRIC_DP:
             case SizeInfo.METRIC_SP:
                 return sizeInfo.measureStaticSize(totalSize, mHost);
             case SizeInfo.METRIC_RATIO:
                 return totalSize == -1 ? UNRESOLVABLE_SIZE : sizeInfo.measureStaticSize(totalSize, mHost);
+            case SizeInfo.METRIC_VIEW_WIDTH_RATIO:
+                relatedSpan = mHost.findResolvedSpan(sizeInfo.relatedElementId, true);
+                relatedSpanResolved = true;
+            case SizeInfo.METRIC_VIEW_HEIGHT_RATIO:
+                if (!relatedSpanResolved) {
+                    relatedSpan = mHost.findResolvedSpan(sizeInfo.relatedElementId, false);
+                    relatedSpanResolved = true;
+                }
             case SizeInfo.METRIC_VIEW_RATIO:
-                Span relatedSpan = mHost.findResolvedSpan(sizeInfo.relatedElementId, isHorizontal);
+                if (!relatedSpanResolved) {
+                    relatedSpan = mHost.findResolvedSpan(sizeInfo.relatedElementId, isHorizontal);
+
+                    if (relatedSpan == null) {
+                        relatedSpan = mHost.findResolvedSpan(sizeInfo.relatedElementId, !isHorizontal);
+                    }
+                }
 
                 if (relatedSpan != null) {
                     return (int) (sizeInfo.size * relatedSpan.getResolvedSize());

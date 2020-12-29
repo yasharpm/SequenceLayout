@@ -8,7 +8,7 @@
 
     android:background="@drawable/background"
 
-    app:pgSize="560"
+    app:pageWidth="560"
     app:sequences="@xml/sequences_sample_1">
 
     <TextView
@@ -34,7 +34,7 @@
         android:layout_height="match_parent"
         android:src="@drawable/ic_settings"/>
 
-    <com.yashoid.sequencelayout.sample.SquareImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/image_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

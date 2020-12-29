@@ -3,7 +3,7 @@
 
     <Vertical>
 
-        <Span id="space" size="16pg"/>
+        <Span id="space" size="16pw"/>
         <Span id="button_sample1" size="wrap"/>
         <Span size="100%space"/>
         <Span id="button_sample2" size="wrap"/>
@@ -15,27 +15,27 @@
     </Vertical>
 
     <Horizontal>
-        <Span size="16pg"/>
+        <Span size="16pw"/>
         <Span id="button_sample1" size="1w"/>
-        <Span size="16pg"/>
+        <Span size="16pw"/>
     </Horizontal>
 
     <Horizontal>
-        <Span size="16pg"/>
+        <Span size="16pw"/>
         <Span id="button_sample2" size="1w"/>
-        <Span size="16pg"/>
+        <Span size="16pw"/>
     </Horizontal>
 
     <Horizontal>
-        <Span size="16pg"/>
+        <Span size="16pw"/>
         <Span id="button_sample3" size="1w"/>
-        <Span size="16pg"/>
+        <Span size="16pw"/>
     </Horizontal>
 
     <Horizontal>
-        <Span size="16pg"/>
+        <Span size="16pw"/>
         <Span id="button_sample4" size="1w"/>
-        <Span size="16pg"/>
+        <Span size="16pw"/>
     </Horizontal>
 
 </Sequences>

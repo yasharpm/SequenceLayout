@@ -3,19 +3,19 @@
 
     <Horizontal>
 
-        <Span size="12pg"/>
+        <Span size="12pw"/>
         <Span id="image_icon" size="@dimen/listitem_icon_size"/>
         <Span size="24dp"/>
         <Span id="text_1" size="1w"/>
-        <Span size="12pg"/>
+        <Span size="12pw"/>
 
     </Horizontal>
 
     <Vertical>
 
-        <Span size="12pg"/>
+        <Span size="12pw"/>
         <Span id="image_icon" size="@dimen/listitem_icon_size"/>
-        <Span size="12pg"/>
+        <Span size="12pw"/>
 
     </Vertical>
 

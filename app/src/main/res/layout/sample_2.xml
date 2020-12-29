@@ -8,7 +8,7 @@
 
     android:background="#fff"
 
-    app:pgSize="360"
+    app:pageWidth="360"
     app:sequences="@xml/sequences_sample_2">
 
     <View

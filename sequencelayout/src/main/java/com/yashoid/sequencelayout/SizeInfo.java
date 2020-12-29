@@ -14,15 +14,17 @@ public class SizeInfo {
     public static final int METRIC_RATIO = 6;
 
     // Element related metrics
-    public static final int METRIC_VIEW_RATIO = 7;
-    public static final int METRIC_ALIGN = 8;
-    public static final int METRIC_MAX = 9;
+    public static final int METRIC_VIEW_WIDTH_RATIO = 7;
+    public static final int METRIC_VIEW_HEIGHT_RATIO = 8;
+    public static final int METRIC_VIEW_RATIO = 9;
+    public static final int METRIC_ALIGN = 10;
+    public static final int METRIC_MAX = 11;
 
     // Wrapping metric
-    public static final int METRIC_WRAP = 10;
+    public static final int METRIC_WRAP = 12;
 
     // Weighted metric
-    public static final int METRIC_WEIGHT = 11;
+    public static final int METRIC_WEIGHT = 13;
 
     private static final String M_DP = "dp";
     private static final String M_DP_2 = "dip";
@@ -34,6 +36,8 @@ public class SizeInfo {
     private static final String M_PW = "pw";
     private static final String M_PH = "ph";
     private static final String M_WRAP = "wrap";
+    private static final String M_VIEW_WIDTH_RATIO = "%w ";
+    private static final String M_VIEW_HEIGHT_RATIO = "%h ";
     private static final String M_VIEW_RATIO = "%";
     private static final String M_ALIGN = "align@";
     private static final String M_MAX = "@MAX";
@@ -69,10 +73,6 @@ public class SizeInfo {
         else if (size.endsWith(M_WRAP)) {
             sizeInfo.metric = METRIC_WRAP;
         }
-        else if (size.endsWith(M_WEIGHT)) {
-            sizeInfo.metric = METRIC_WEIGHT;
-            sizeInfo.size = readFloat(size, M_WEIGHT);
-        }
         else if (size.endsWith(M_RATIO)) {
             sizeInfo.metric = METRIC_RATIO;
             sizeInfo.size = readFloat(size, M_RATIO) / 100f;
@@ -105,6 +105,22 @@ public class SizeInfo {
             sizeInfo.metric = METRIC_SP;
             sizeInfo.size = readFloat(size, M_SP);
         }
+        else if (size.contains(M_VIEW_WIDTH_RATIO)) {
+            sizeInfo.metric = METRIC_VIEW_WIDTH_RATIO;
+
+            int ratioPosition = size.indexOf(M_VIEW_WIDTH_RATIO);
+
+            sizeInfo.relatedElementId = size.substring(ratioPosition + M_VIEW_WIDTH_RATIO.length());
+            sizeInfo.size = Float.parseFloat(size.substring(0, ratioPosition)) / 100f;
+        }
+        else if (size.contains(M_VIEW_HEIGHT_RATIO)) {
+            sizeInfo.metric = METRIC_VIEW_HEIGHT_RATIO;
+
+            int ratioPosition = size.indexOf(M_VIEW_HEIGHT_RATIO);
+
+            sizeInfo.relatedElementId = size.substring(ratioPosition + M_VIEW_HEIGHT_RATIO.length());
+            sizeInfo.size = Float.parseFloat(size.substring(0, ratioPosition)) / 100f;
+        }
         else if (size.contains(M_VIEW_RATIO)) {
             sizeInfo.metric = METRIC_VIEW_RATIO;
 
@@ -116,6 +132,10 @@ public class SizeInfo {
         else if (size.startsWith(M_ALIGN)) {
             sizeInfo.metric = METRIC_ALIGN;
             sizeInfo.relatedElementId = size.substring(M_ALIGN.length());
+        }
+        else if (size.endsWith(M_WEIGHT)) {
+            sizeInfo.metric = METRIC_WEIGHT;
+            sizeInfo.size = readFloat(size, M_WEIGHT);
         }
         else if (environment.readSizeInfo(size, sizeInfo)) {
             // All is fine.
@@ -159,7 +179,8 @@ public class SizeInfo {
     }
 
     public boolean isElementRelated() {
-        return metric == METRIC_VIEW_RATIO || metric == METRIC_ALIGN || metric == METRIC_MAX;
+        return metric == METRIC_VIEW_WIDTH_RATIO || metric == METRIC_VIEW_HEIGHT_RATIO ||
+                metric == METRIC_VIEW_RATIO || metric == METRIC_ALIGN || metric == METRIC_MAX;
     }
 
     public int measureStaticSize(int totalSize, SizeResolverHost sizeResolverHost) {

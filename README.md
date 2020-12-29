@@ -88,7 +88,9 @@ This resolves to putting the view in the center of the screen as a square of `40
 - `@dimen` Size as a reference to dimens. Examples: `@dimen/default_margin`, `@dimen/icon_size`
 - `mm` Size in millimeters. Examples: `10mm`, `1mm`, `0.85mm`
 - `wrap` Wrapping size. Specific to use for views. Is equivalent for the known `wrap_content` behaviour.
-- `%[view_id]` Size percentage relative to another view's size. Examples: `30%view`, `100%text_title`, `-10%image_profile`
+- `%w [view_id]` Size percentage relative to another horizontal span's size. Examples: `30%w view`, `100%w text_title`, `-10%w image_profile`
+- `%h [view_id]` Size percentage relative to another vertical span's size. Examples: `30%h view`, `100%h text_title`, `-10%h image_profile`
+- `%[view_id]` Size percentage relative to another span's size. If a span width the same id exists in both orientations, the on in the same orientation in prioritized. Examples: `30%view`, `100%text_title`, `-10%image_profile`
 - `align@[view_id]` Set the size so that the Span would end at the start of the given id's view. Examples: `align@text_title`, `align@image_profile`
 - `pw` Relative to the `pageWidth` defined for the SequenceLayout. Meant to be the main sizing unit and to replace `dp` sizes. This allows you to define your layout solely by following the sizes that are given to you by the designers. Examples: `12pw`, `1.5pw`, `-4pw`
 - `ph` Relative to the `pageHeight` defined for the SequenceLayout. Works similar to `pw` but allows you to better adjust the height of your views.  Examples: `12ph`, `1.5ph`, `-4ph`
