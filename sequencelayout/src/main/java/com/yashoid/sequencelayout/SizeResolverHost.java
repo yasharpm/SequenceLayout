@@ -1,9 +1,5 @@
 package com.yashoid.sequencelayout;
 
-import android.view.View;
-
-import java.util.List;
-
 public interface SizeResolverHost {
 
     float getPgSize();
@@ -14,10 +10,16 @@ public interface SizeResolverHost {
 
     float getScreenScaledDensity();
 
-    View findViewById(int id);
+    int measureElementWidth(String id, int height, int min, int max);
 
-    List<Span> getResolvedSpans();
-    List<Span> getUnresolvedSpans();
+    int measureElementHeight(String id, int width, int min, int max);
+
+    void measureElement(String id, int minWidth, int maxWidth, int minHeight, int maxHeight, int[] measuredSize);
+
+    Span findResolvedSpan(String id, boolean horizontal);
+    Span findUnresolvedSpan(String id, boolean horizontal);
+
+    void onSpanResolved(Span span);
 
     int getResolvingWidth();
     int getResolvingHeight();

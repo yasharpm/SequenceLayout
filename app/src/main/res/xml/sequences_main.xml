@@ -3,13 +3,13 @@
 
     <Vertical>
 
-        <Span size="16pg"/>
+        <Span id="space" size="16pg"/>
         <Span id="button_sample1" size="wrap"/>
-        <Span size="16pg"/>
+        <Span size="100%space"/>
         <Span id="button_sample2" size="wrap"/>
-        <Span size="16pg"/>
+        <Span size="100%space"/>
         <Span id="button_sample3" size="wrap"/>
-        <Span size="16pg"/>
+        <Span size="100%space"/>
         <Span id="button_sample4" size="wrap"/>
 
     </Vertical>

@@ -1,18 +1,17 @@
 package com.yashoid.sequencelayout;
 
-import android.text.TextUtils;
-import android.util.SparseIntArray;
-import android.view.View;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
 class PageResolver implements SizeResolverHost {
 
-    private static final int MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN = 50;
+    private static final int MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN = 20;
+    private static final int MAXIMUM_EXPECTED_NUMBER_OF_SPANS = MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN * 3;
 
-    private final SequenceLayout mView;
+    private final Environment mEnvironment;
     private float mPgSize;
 
     private List<Sequence> mSequences = new ArrayList<>();
@@ -22,17 +21,17 @@ class PageResolver implements SizeResolverHost {
 
     private List<Sequence> mUnresolvedSequences = new ArrayList<>();
 
-    private List<Span> mUnresolvedSpans = new ArrayList<>();
-    private List<Span> mResolvedSpans = new ArrayList<>();
+    private List<Span> mUnresolvedSpans = new ArrayList<>(MAXIMUM_EXPECTED_NUMBER_OF_SPANS);
+    private List<Span> mResolvedSpans = new ArrayList<>(MAXIMUM_EXPECTED_NUMBER_OF_SPANS);
 
     private int mResolvedWidth = -1;
     private int mResolvedHeight = -1;
 
-    private SparseIntArray mIdMap = new SparseIntArray(MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN);
-    private int[] mSizeMap = new int[MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN * 5];
+    private String[] mIdMap = new String[MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN];
+    private int[] mSizeMap = new int[MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN * 4];
 
-    PageResolver(SequenceLayout view) {
-        mView = view;
+    public PageResolver(Environment environment) {
+        mEnvironment = environment;
     }
 
     @Override
@@ -51,30 +50,49 @@ class PageResolver implements SizeResolverHost {
 
     @Override
     public float getScreenDensity() {
-        return mView.getResources().getDisplayMetrics().density;
+        return mEnvironment.getScreenDensity();
     }
 
     @Override
     public float getScreenScaledDensity() {
-        return mView.getResources().getDisplayMetrics().scaledDensity;
+        return mEnvironment.getScreenScaledDensity();
     }
 
-    void onSequenceAdded(Sequence sequence) {
+    @Override
+    public int measureElementWidth(String id, int height, int min, int max) {
+        return mEnvironment.measureElementWidth(id, height, min, max);
+    }
+
+    @Override
+    public int measureElementHeight(String id, int width, int min, int max) {
+        return mEnvironment.measureElementHeight(id, width, min, max);
+    }
+
+    @Override
+    public void measureElement(String id, int minWidth, int maxWidth, int minHeight, int maxHeight, int[] measuredSize) {
+        mEnvironment.measureElement(id, minWidth, maxWidth, minHeight, maxHeight, measuredSize);
+    }
+
+    public void onSequenceAdded(Sequence sequence) {
         mSequences.add(sequence);
 
         mUnresolvedSpans.addAll(sequence.getSpans());
     }
 
-    void onSequenceRemoved(Sequence sequence) {
+    public void onSequenceRemoved(Sequence sequence) {
         mSequences.remove(sequence);
 
         mResolvedSpans.removeAll(sequence.getSpans());
         mUnresolvedSpans.removeAll(sequence.getSpans());
     }
 
-    Sequence findSequenceById(String id) {
+    public Sequence findSequenceById(String id) {
+        if (id == null) {
+            return null;
+        }
+
         for (Sequence sequence: mSequences) {
-            if (TextUtils.equals(id, sequence.getId())) {
+            if (id.equals(sequence.getId())) {
                 return sequence;
             }
         }
@@ -82,14 +100,65 @@ class PageResolver implements SizeResolverHost {
         return null;
     }
 
-    void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
-        mPgSize = mView.getPgSize();
+    public void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
+        mPgSize = mEnvironment.getPgSize();
 
         mResolvingWidth = pageWidth;
         mResolvingHeight = pageHeight;
 
+        // Resolving visibility
         mUnresolvedSpans.addAll(mResolvedSpans);
         mResolvedSpans.clear();
+
+        int unresolvedSpanCount = mUnresolvedSpans.size();
+
+        while (!mUnresolvedSpans.isEmpty()) {
+            ListIterator<Span> iterator = mUnresolvedSpans.listIterator();
+
+            while (iterator.hasNext()) {
+                Span span = iterator.next();
+
+                if (span.visibilityElement == null) {
+                    span.setVisible(mEnvironment.isElementVisible(span.id));
+
+                    SpanUtil.add(span, mResolvedSpans);
+                    iterator.remove();
+                }
+                else {
+                    Span resolvedSpan = SpanUtil.find(span.visibilityElement, span.isHorizontal, mResolvedSpans);
+
+                    if (resolvedSpan == null) {
+                        resolvedSpan = SpanUtil.find(span.visibilityElement, !span.isHorizontal, mResolvedSpans);
+                    }
+
+                    if (resolvedSpan != null) {
+                        span.setVisible(resolvedSpan.isVisible());
+
+                        SpanUtil.add(span, mResolvedSpans);
+                        iterator.remove();
+                    }
+                }
+            }
+
+            int remainingUnresolvedSpans = mUnresolvedSpans.size();
+
+            if (unresolvedSpanCount == remainingUnresolvedSpans) {
+                // We do this to be soft on the visibility resolution.
+                break;
+            }
+            else {
+                unresolvedSpanCount = remainingUnresolvedSpans;
+            }
+        }
+
+        for (Span span: mUnresolvedSpans) {
+            span.setVisible(true);
+        }
+
+        // Resolving positions
+        mUnresolvedSpans.addAll(mResolvedSpans);
+        mResolvedSpans.clear();
+        Collections.sort(mUnresolvedSpans);
 
         mUnresolvedSequences.clear();
         mUnresolvedSequences.addAll(mSequences);
@@ -122,16 +191,34 @@ class PageResolver implements SizeResolverHost {
         mResolvedHeight = maxHeight;
     }
 
-    void layoutViews() {
-        mIdMap.clear();
+    public void positionViews() {
+        int elementCount = mEnvironment.getElementCount();
+
+        if (mIdMap.length < elementCount) {
+            mIdMap = new String[elementCount];
+        }
+
+        if (mSizeMap.length < elementCount * 4) {
+            mSizeMap = new int[elementCount * 4];
+        }
+
+        elementCount = 0;
 
         for (Span unit: mResolvedSpans) {
-            int index = mIdMap.get(unit.viewId, -1);
+            if (unit.id == null) {
+                continue;
+            }
 
-            if (index == -1) {
-                index = mIdMap.size();
+            int index = Arrays.binarySearch(mIdMap, 0, elementCount, unit.id);
 
-                mIdMap.put(unit.viewId, index);
+            if (index < 0) {
+                index = elementCount;
+
+                mIdMap[index] = unit.id;
+
+                elementCount++;
+
+                Arrays.sort(mIdMap, 0, elementCount);
             }
 
             if (unit.isHorizontal) {
@@ -144,21 +231,10 @@ class PageResolver implements SizeResolverHost {
             }
         }
 
-        for (int i = 0; i < mIdMap.size(); i++) {
-            View child = mView.findViewById(mIdMap.keyAt(i));
+        for (int i = 0; i < elementCount; i++) {
+            String id = mIdMap[i];
 
-            if (child == null) {
-                continue;
-            }
-
-            int index = mIdMap.valueAt(i);
-
-            child.measure(
-                    View.MeasureSpec.makeMeasureSpec(mSizeMap[index * 4 + 2] - mSizeMap[index * 4], View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(mSizeMap[index * 4 + 3] - mSizeMap[index * 4 + 1], View.MeasureSpec.EXACTLY)
-            );
-
-            child.layout(mSizeMap[index * 4], mSizeMap[index * 4 + 1], mSizeMap[index * 4 + 2], mSizeMap[index * 4 + 3]);
+            mEnvironment.positionElement(id, mSizeMap[i * 4], mSizeMap[i * 4 + 1], mSizeMap[i * 4 + 2], mSizeMap[i * 4 + 3]);
         }
     }
 
@@ -171,18 +247,21 @@ class PageResolver implements SizeResolverHost {
     }
 
     @Override
-    public View findViewById(int id) {
-        return mView.findViewById(id);
+    public Span findResolvedSpan(String id, boolean horizontal) {
+        return SpanUtil.find(id, horizontal, mResolvedSpans);
     }
 
     @Override
-    public List<Span> getResolvedSpans() {
-        return mResolvedSpans;
+    public Span findUnresolvedSpan(String id, boolean horizontal) {
+        return SpanUtil.find(id, horizontal, mUnresolvedSpans);
     }
 
     @Override
-    public List<Span> getUnresolvedSpans() {
-        return mUnresolvedSpans;
+    public void onSpanResolved(Span span) {
+        if (mUnresolvedSpans.remove(span)) {
+            mResolvedSpans.add(span);
+            Collections.sort(mResolvedSpans);
+        }
     }
 
     @Override

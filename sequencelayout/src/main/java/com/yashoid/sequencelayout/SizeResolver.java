@@ -1,12 +1,10 @@
 package com.yashoid.sequencelayout;
 
-import android.view.View;
-
-import java.util.List;
-
 public class SizeResolver {
 
     public static final int UNRESOLVABLE_SIZE = -1;
+
+    private static final int[] sSizeHelper = new int[2];
 
     private SizeResolverHost mHost;
 
@@ -19,24 +17,9 @@ public class SizeResolver {
     }
 
     public int resolveSize(SizeInfo sizeInfo, boolean isHorizontal, int totalSize) {
-        final List<Span> resolvedSpans = mHost.getResolvedSpans();
-        final List<Span> unresolvedSpans = mHost.getUnresolvedSpans();
-
-        View view = sizeInfo.viewId == 0 ? null : mHost.findViewById(sizeInfo.viewId);
-
         if (sizeInfo instanceof Span) {
-            if (view != null && view.getVisibility() == View.GONE) {
+            if (!((Span) sizeInfo).isVisible()) {
                 return 0;
-            }
-
-            int visibilityElement = ((Span) sizeInfo).visibilityElement;
-
-            if (visibilityElement != 0) {
-                view = mHost.findViewById(visibilityElement);
-
-                if (view != null && view.getVisibility() == View.GONE) {
-                    return 0;
-                }
             }
         }
 
@@ -50,7 +33,7 @@ public class SizeResolver {
             case SizeInfo.METRIC_RATIO:
                 return totalSize == -1 ? UNRESOLVABLE_SIZE : sizeInfo.measureStaticSize(totalSize, mHost);
             case SizeInfo.METRIC_VIEW_RATIO:
-                Span relatedSpan = SpanUtil.find(sizeInfo.relatedElementId, isHorizontal, resolvedSpans);
+                Span relatedSpan = mHost.findResolvedSpan(sizeInfo.relatedElementId, isHorizontal);
 
                 if (relatedSpan != null) {
                     return (int) (sizeInfo.size * relatedSpan.getResolvedSize());
@@ -72,29 +55,29 @@ public class SizeResolver {
 
                 return max;
             case SizeInfo.METRIC_WRAP:
-                if (sizeInfo.viewId == 0) {
+                if (sizeInfo.id == null) {
                     return 0;
                 }
 
-                Span thisDirection = SpanUtil.find(sizeInfo.viewId, isHorizontal, resolvedSpans);
+                Span thisDirection = mHost.findResolvedSpan(sizeInfo.id, isHorizontal);
 
                 if (thisDirection != null) {
                     return thisDirection.getResolvedSize();
                 }
 
-                thisDirection = SpanUtil.find(sizeInfo.viewId, isHorizontal, unresolvedSpans);
+                thisDirection = mHost.findUnresolvedSpan(sizeInfo.id, isHorizontal);
 
                 if (thisDirection == null) {
-                    throw new RuntimeException("Referenced element(" + sizeInfo.viewId + ") not found in unresovled units.");
+                    throw new RuntimeException("Referenced element(" + sizeInfo.id + ") not found in unresovled units.");
                 }
 
-                Span otherDirection = SpanUtil.find(sizeInfo.viewId, !isHorizontal, resolvedSpans);
+                Span otherDirection = mHost.findResolvedSpan(sizeInfo.id, !isHorizontal);
 
                 if (otherDirection == null) {
-                    otherDirection = SpanUtil.find(sizeInfo.viewId, !isHorizontal, unresolvedSpans);
+                    otherDirection = mHost.findUnresolvedSpan(sizeInfo.id, !isHorizontal);
 
                     if (otherDirection == null) {
-                        throw new RuntimeException("Other direction not found for referenced view(" + sizeInfo.viewId + ").");
+                        throw new RuntimeException("Other direction not found for referenced view(" + sizeInfo.id + ").");
                     }
                 }
 
@@ -117,14 +100,10 @@ public class SizeResolver {
                     maxSelf = maxSelf == -1 ? totalSize : Math.min(maxSelf, totalSize);
 
                     if (isHorizontal) {
-                        measureViewWidth(view, otherDirection.getResolvedSize(), minSelf, maxSelf);
-
-                        return view.getMeasuredWidth();
+                        return mHost.measureElementWidth(sizeInfo.id, otherDirection.getResolvedSize(), minSelf, maxSelf);
                     }
 
-                    measureViewHeight(view, otherDirection.getResolvedSize(), minSelf, maxSelf);
-
-                    return view.getMeasuredHeight();
+                    return mHost.measureElementHeight(sizeInfo.id, otherDirection.getResolvedSize(), minSelf, maxSelf);
                 }
 
                 if (otherDirection.metric == SizeInfo.METRIC_WRAP) {
@@ -146,16 +125,12 @@ public class SizeResolver {
                     int minOther = 0;
                     int maxOther = -1;
 
-                    if (otherDirection != null) {
-                        Span span = otherDirection;
+                    if (otherDirection.min != null) {
+                        minOther = resolveSize(otherDirection.min, !isHorizontal, totalSize);
+                    }
 
-                        if (span.min != null) {
-                            minOther = resolveSize(span.min, !isHorizontal, totalSize);
-                        }
-
-                        if (span.max != null) {
-                            maxOther = resolveSize(span.max, !isHorizontal, totalSize);
-                        }
+                    if (otherDirection.max != null) {
+                        maxOther = resolveSize(otherDirection.max, !isHorizontal, totalSize);
                     }
 
                     if (maxSelf == -1) {
@@ -167,32 +142,30 @@ public class SizeResolver {
                             maxOther = mHost.getResolvingHeight();
                         }
 
-                        measureView(view, minSelf, maxSelf, minOther, maxOther);
+                        mHost.measureElement(sizeInfo.id, minSelf, maxSelf, minOther, maxOther, sSizeHelper);
 
-                        if (view.getMeasuredHeight() != UNRESOLVABLE_SIZE) {
-                            otherDirection.setResolvedSize(view.getMeasuredHeight());
+                        if (sSizeHelper[1] != UNRESOLVABLE_SIZE) {
+                            otherDirection.setResolvedSize(sSizeHelper[1]);
 
-                            unresolvedSpans.remove(otherDirection);
-                            resolvedSpans.add(otherDirection);
+                            mHost.onSpanResolved(otherDirection);
                         }
 
-                        return view.getMeasuredWidth();
+                        return sSizeHelper[0];
                     }
 
                     if (maxOther == -1) {
                         maxOther = mHost.getResolvingWidth();
                     }
 
-                    measureView(view, minOther, maxOther, minSelf, maxSelf);
+                    mHost.measureElement(sizeInfo.id, minOther, maxOther, minSelf, maxSelf, sSizeHelper);
 
-                    if (view.getMeasuredWidth() != UNRESOLVABLE_SIZE) {
-                        otherDirection.setResolvedSize(view.getMeasuredWidth());
+                    if (sSizeHelper[0] != UNRESOLVABLE_SIZE) {
+                        otherDirection.setResolvedSize(sSizeHelper[0]);
 
-                        unresolvedSpans.remove(otherDirection);
-                        resolvedSpans.add(otherDirection);
+                        mHost.onSpanResolved(otherDirection);
                     }
 
-                    return view.getMeasuredHeight();
+                    return sSizeHelper[1];
                 }
 
                 return UNRESOLVABLE_SIZE;
@@ -201,18 +174,6 @@ public class SizeResolver {
             default:
                 throw new RuntimeException("Unsupported metric for size info(" + sizeInfo + ").");
         }
-    }
-
-    private void measureViewWidth(View view, int height, int minWidth, int maxWidth) {
-        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
-    }
-
-    private void measureViewHeight(View view, int width, int minHeight, int maxHeight) {
-        view.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-    }
-
-    private void measureView(View view, int minWidth, int maxWidth, int minHeight, int maxHeight) {
-        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
     }
 
 }

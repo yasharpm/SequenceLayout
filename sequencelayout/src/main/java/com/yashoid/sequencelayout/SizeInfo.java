@@ -1,8 +1,5 @@
 package com.yashoid.sequencelayout;
 
-import android.content.Context;
-import android.text.TextUtils;
-
 public class SizeInfo {
 
     public static final int SIZE_WEIGHTED = -1;
@@ -38,13 +35,12 @@ public class SizeInfo {
     private static final String M_VIEW_RATIO = "%";
     private static final String M_ALIGN = "align@";
     private static final String M_MAX = "@MAX";
-    private static final String M_REFERENCE = "@";
 
     private static final float MM_PER_INCH = 25.4f;
     private static final float MM_TO_PX_RATIO = 160 / MM_PER_INCH ;
 
-    public static void readSizeInfo(String size, SizeInfo sizeInfo, Context context) {
-        if (TextUtils.isEmpty(size)) {
+    public static void readSizeInfo(String size, SizeInfo sizeInfo, Environment environment) {
+        if (size == null || size.length() == 0) {
             throw new IllegalArgumentException("Size is empty");
         }
 
@@ -61,7 +57,7 @@ public class SizeInfo {
                 sizeInfo.relations[i] = new SizeInfo();
 
                 try {
-                    readSizeInfo(rawSizeInfoArr[i], sizeInfo.relations[i], context);
+                    readSizeInfo(rawSizeInfoArr[i], sizeInfo.relations[i], environment);
                 } catch (IllegalArgumentException e) {
                     throw new IllegalArgumentException("Invalid max syntax. Separate each size " +
                             "with a comma and no extra spaces.", e);
@@ -103,23 +99,20 @@ public class SizeInfo {
             sizeInfo.metric = METRIC_SP;
             sizeInfo.size = readFloat(size, M_SP);
         }
-        else if (size.startsWith(M_REFERENCE)) {
-            sizeInfo.metric = METRIC_PX;
-            int resId = Integer.parseInt(size.substring(M_REFERENCE.length()));
-            sizeInfo.size = context.getResources().getDimension(resId);
-        }
         else if (size.contains(M_VIEW_RATIO)) {
             sizeInfo.metric = METRIC_VIEW_RATIO;
 
             int ratioPosition = size.indexOf(M_VIEW_RATIO);
 
-            String rawId = size.substring(ratioPosition + M_VIEW_RATIO.length());
-            sizeInfo.relatedElementId = resolveViewId(rawId, context);
+            sizeInfo.relatedElementId = size.substring(ratioPosition + M_VIEW_RATIO.length());
             sizeInfo.size = Float.parseFloat(size.substring(0, ratioPosition)) / 100f;
         }
         else if (size.startsWith(M_ALIGN)) {
             sizeInfo.metric = METRIC_ALIGN;
-            sizeInfo.relatedElementId = resolveViewId(size.substring(M_ALIGN.length()), context);
+            sizeInfo.relatedElementId = size.substring(M_ALIGN.length());
+        }
+        else if (environment.readSizeInfo(size, sizeInfo)) {
+            // All is fine.
         }
         else {
             throw new IllegalArgumentException("Unrecognized size info '" + size + "'.");
@@ -135,11 +128,11 @@ public class SizeInfo {
         }
     }
 
-    public int viewId = 0;
+    public String id = null;
 
     public float size;
     public int metric = METRIC_WRAP;
-    public int relatedElementId = 0;
+    public String relatedElementId = null;
     public SizeInfo[] relations = null;
 
     private String encoded;
@@ -184,26 +177,6 @@ public class SizeInfo {
     @Override
     public String toString() {
         return encoded;
-    }
-
-    public static int resolveViewId(String idName, Context context) {
-        if (idName.startsWith("@id/")) {
-            // Everything is fine.
-        }
-        else if (idName.startsWith("@+id/")) {
-            idName = idName.replace("+", "");
-        }
-        else {
-            idName = "@id/" + idName;
-        }
-
-        int viewId = context.getResources().getIdentifier(idName, null, context.getPackageName());
-
-        if (viewId == 0) {
-            throw new IllegalArgumentException("Resource with id " + idName + " not found.");
-        }
-
-        return viewId;
     }
 
 }

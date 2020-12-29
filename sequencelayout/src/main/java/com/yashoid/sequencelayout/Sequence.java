@@ -1,6 +1,5 @@
 package com.yashoid.sequencelayout;
 
-import android.content.Context;
 import android.util.SparseIntArray;
 
 import java.util.ArrayList;
@@ -13,19 +12,15 @@ public class Sequence {
 
     public static class SequenceEdge {
 
-        public static SequenceEdge read(String definition, Context context) {
-            int targetId;
+        public static SequenceEdge read(String definition) {
             float portionValue;
 
             int atIndex = definition.indexOf("@");
 
-            String targetRawId = atIndex == -1 ? "" : definition.substring(atIndex + 1);
+            String targetId = atIndex == -1 ? null : definition.substring(atIndex + 1);
 
-            if (targetRawId.isEmpty()) {
-                targetId = 0;
-            }
-            else {
-                targetId = SizeInfo.resolveViewId(targetRawId, context);
+            if (targetId != null && targetId.isEmpty()) {
+                targetId = null;
             }
 
             String portion = definition.substring(0, atIndex == -1 ? definition.length() : atIndex);
@@ -51,24 +46,24 @@ public class Sequence {
             return new SequenceEdge(targetId, portionValue);
         }
 
-        public int targetId;
+        public String targetId;
         public float portion;
 
-        public SequenceEdge(int targetId, float portion) {
+        public SequenceEdge(String targetId, float portion) {
             this.targetId = targetId;
             this.portion = portion;
         }
 
         public boolean isRelativeToParent() {
-            return targetId == 0;
+            return targetId == null;
         }
 
-        protected int resolve(Sequence sequence, int totalSize, List<Span> resolvedSizes) {
-            if (targetId == 0) {
+        protected int resolve(Sequence sequence, int totalSize, SizeResolverHost host) {
+            if (targetId == null) {
                 return (int) (totalSize * portion);
             }
 
-            Span resolveUnit = SpanUtil.find(targetId, sequence.mIsHorizontal, resolvedSizes);
+            Span resolveUnit = host.findResolvedSpan(targetId, sequence.mIsHorizontal);
 
             if (resolveUnit == null) {
                 return -1;
@@ -97,8 +92,8 @@ public class Sequence {
 
     private SizeResolver mSizeResolver;
 
-    public Sequence(String id, boolean isHorizontal, String start, String end, Context context) {
-        this(id, isHorizontal, SequenceEdge.read(start, context), SequenceEdge.read(end, context));
+    public Sequence(String id, boolean isHorizontal, String start, String end) {
+        this(id, isHorizontal, SequenceEdge.read(start), SequenceEdge.read(end));
     }
 
     public Sequence(String id, boolean isHorizontal, SequenceEdge start, SequenceEdge end) {
@@ -146,11 +141,8 @@ public class Sequence {
 
         int totalSize = mIsHorizontal ? host.getResolvingWidth() : host.getResolvingHeight();
 
-        final List<Span> resolvedSpans = host.getResolvedSpans();
-        final List<Span> unresolvedSpans = host.getUnresolvedSpans();
-
-        int start = mStart.resolve(this, totalSize, resolvedSpans);
-        int end = mEnd.resolve(this, totalSize, resolvedSpans);
+        int start = mStart.resolve(this, totalSize, host);
+        int end = mEnd.resolve(this, totalSize, host);
 
         boolean boundariesAreKnown = start >= 0 && end >= 0;
 
@@ -177,12 +169,12 @@ public class Sequence {
             int size = -1;
             boolean sizeUnresolved = false;
 
-            int min = span.min != null ? resolveSizeInfo(span.min, resolvedSpans, hasEncounteredPositionResolutionGap, currentPosition, totalSize) : Integer.MIN_VALUE;
-            int max = span.max != null ? resolveSizeInfo(span.max, resolvedSpans, hasEncounteredPositionResolutionGap, currentPosition, totalSize) : Integer.MAX_VALUE;
+            int min = span.min != null ? resolveSizeInfo(span.min, host, hasEncounteredPositionResolutionGap, currentPosition, totalSize) : Integer.MIN_VALUE;
+            int max = span.max != null ? resolveSizeInfo(span.max, host, hasEncounteredPositionResolutionGap, currentPosition, totalSize) : Integer.MAX_VALUE;
 
             if (min != -1 && max != -1) {
                 if (span.metric != SizeInfo.METRIC_WEIGHT) {
-                    size = resolveSizeInfo(span, resolvedSpans, hasEncounteredPositionResolutionGap, currentPosition, totalSize);
+                    size = resolveSizeInfo(span, host, hasEncounteredPositionResolutionGap, currentPosition, totalSize);
 
                     if (size != -1) {
                         size = Math.max(min, Math.min(max, size));
@@ -208,13 +200,9 @@ public class Sequence {
                 mMeasuredSizes.put(index, size);
                 calculatedSize += size;
 
-                if (span.viewId != 0) {
-                    unresolvedSpans.remove(span);
+                span.setResolvedSize(size);
 
-                    span.setResolvedSize(size);
-
-                    resolvedSpans.add(span);
-                }
+                host.onSpanResolved(span);
 
                 if (!hasEncounteredPositionResolutionGap) {
                     span.setStart(currentPosition);
@@ -260,14 +248,12 @@ public class Sequence {
                     remainingSize -= size;
                 }
 
-                if (span.viewId != 0) {
-                    unresolvedSpans.remove(span);
-
+                if (span.id != null) {
                     span.setResolvedSize(size);
                     span.setStart(currentPosition);
                     span.setEnd(currentPosition + size);
 
-                    resolvedSpans.add(span);
+                    host.onSpanResolved(span);
                 }
 
                 currentPosition += size;
@@ -279,11 +265,11 @@ public class Sequence {
         return start + calculatedSize;
     }
 
-    private int resolveSizeInfo(SizeInfo sizeInfo, List<Span> resolvedSpans,
+    private int resolveSizeInfo(SizeInfo sizeInfo, SizeResolverHost host,
                                 boolean hasEncounteredPositionResolutionGap,
                                 int currentPosition, int totalSize) {
         if (sizeInfo.metric == SizeInfo.METRIC_ALIGN) {
-            Span relatedSpan = SpanUtil.find(sizeInfo.relatedElementId, mIsHorizontal, resolvedSpans);
+            Span relatedSpan = host.findResolvedSpan(sizeInfo.relatedElementId, mIsHorizontal);
 
             if (!hasEncounteredPositionResolutionGap && relatedSpan != null && relatedSpan.isPositionSet()) {
                 int targetPosition = relatedSpan.getStart();

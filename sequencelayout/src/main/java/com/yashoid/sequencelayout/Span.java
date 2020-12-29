@@ -1,10 +1,8 @@
 package com.yashoid.sequencelayout;
 
-import android.content.Context;
-
 import org.xmlpull.v1.XmlPullParser;
 
-public class Span extends SizeInfo {
+public class Span extends SizeInfo implements Comparable<Span> {
 
     private static final String ID = "id";
     private static final String SIZE = "size";
@@ -17,13 +15,15 @@ public class Span extends SizeInfo {
     public SizeInfo min = null;
     public SizeInfo max = null;
 
-    public int visibilityElement = 0;
+    public String visibilityElement = null;
+
+    private boolean visible;
 
     private int resolvedSize = -1;
     private int start = -1;
     private int end = -1;
 
-    Span(XmlPullParser parser, boolean isHorizontal, Context context) {
+    Span(XmlPullParser parser, boolean isHorizontal, Environment environment) {
         this.isHorizontal = isHorizontal;
 
         final int attrCount = parser.getAttributeCount();
@@ -35,15 +35,15 @@ public class Span extends SizeInfo {
 
             switch (name) {
                 case ID:
-                    viewId = resolveViewId(parser.getAttributeValue(i), context);
+                    id = parser.getAttributeValue(i);
                     continue;
                 case SIZE:
                     hasSize = true;
-                    readSizeInfo(parser.getAttributeValue(i), this, context);
+                    readSizeInfo(parser.getAttributeValue(i), this, environment);
                     continue;
                 case MIN:
                     min = new SizeInfo();
-                    readSizeInfo(parser.getAttributeValue(i), min, context);
+                    readSizeInfo(parser.getAttributeValue(i), min, environment);
 
                     if (min.metric == METRIC_WEIGHT) {
                         throw new SequenceSyntaxException("Line " + parser.getLineNumber() +
@@ -53,7 +53,7 @@ public class Span extends SizeInfo {
                     continue;
                 case MAX:
                     max = new SizeInfo();
-                    readSizeInfo(parser.getAttributeValue(i), max, context);
+                    readSizeInfo(parser.getAttributeValue(i), max, environment);
 
                     if (max.metric == METRIC_WEIGHT) {
                         throw new SequenceSyntaxException("Line " + parser.getLineNumber() +
@@ -62,7 +62,7 @@ public class Span extends SizeInfo {
 
                     continue;
                 case VISIBLE_IF:
-                    visibilityElement = resolveViewId(parser.getAttributeValue(i), context);
+                    visibilityElement = parser.getAttributeValue(i);
                     continue;
                 default:
                     throw new SequenceSyntaxException("Line " + parser.getLineNumber() + ": " +
@@ -78,16 +78,24 @@ public class Span extends SizeInfo {
         }
 
         if (min != null) {
-            min.viewId = viewId;
+            min.id = id;
         }
 
         if (max != null) {
-            max.viewId = viewId;
+            max.id = id;
         }
     }
 
     public Span() {
 
+    }
+
+    boolean isVisible() {
+        return visible;
+    }
+
+    void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     void setResolvedSize(int resolvedSize) {
@@ -134,12 +142,32 @@ public class Span extends SizeInfo {
 
         Span span = (Span) obj;
 
-        if (viewId != 0 && span.viewId != 0) {
-            return span.viewId == viewId && span.isHorizontal == isHorizontal;
+        if (id != null && span.id != null) {
+            return span.id.equals(id) && span.isHorizontal == isHorizontal;
         }
         else {
             return this == obj;
         }
+    }
+
+    @Override
+    public int compareTo(Span that) {
+        if (this.isHorizontal != that.isHorizontal) {
+            return this.isHorizontal ? 1 : -1;
+        }
+
+        if (this.id != null) {
+            if (that.id != null) {
+                return this.id.compareTo(that.id);
+            }
+
+            return 1;
+        }
+        else if (that.id != null) {
+            return -1;
+        }
+
+        return this.hashCode() - that.hashCode();
     }
 
 }

@@ -1,7 +1,5 @@
 package com.yashoid.sequencelayout;
 
-import android.content.Context;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -23,10 +21,10 @@ public class SequenceReader {
 
     static final String SPAN = "Span";
 
-    private Context mContext;
+    private Environment mEnvironment;
 
-    public SequenceReader(Context context) {
-        mContext = context;
+    public SequenceReader(Environment environment) {
+        mEnvironment = environment;
     }
 
     public List<Sequence> readSequences(XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -94,10 +92,10 @@ public class SequenceReader {
             }
         }
 
-        Sequence sequence = null;
+        Sequence sequence;
 
         try {
-            sequence = new Sequence(id, horizontal, start, end, mContext);
+            sequence = new Sequence(id, horizontal, start, end);
 
             while (parser.next() != XmlPullParser.END_TAG) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -107,7 +105,7 @@ public class SequenceReader {
                 String name = parser.getName();
 
                 if (SPAN.equals(name)) {
-                    Span span = new Span(parser, horizontal, mContext);
+                    Span span = new Span(parser, horizontal, mEnvironment);
 
                     sequence.addSpan(span);
                 }
