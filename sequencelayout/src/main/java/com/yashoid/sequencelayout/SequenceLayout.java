@@ -16,7 +16,7 @@ public class SequenceLayout extends ViewGroup implements Environment {
 
     private static final String METRIC_REFERENCE = "@";
 
-    private PageResolver mPageResolver;
+    private IPageResolver mPageResolver;
 
     private float mPageWidth;
     private float mPageHeight;
@@ -57,6 +57,16 @@ public class SequenceLayout extends ViewGroup implements Environment {
         a.recycle();
 
         mPgAffectiveWidth = getResources().getDisplayMetrics().widthPixels;
+    }
+
+    IPageResolver getPageResolver() {
+        return mPageResolver;
+    }
+
+    void setPageResolver(IPageResolver pageResolver) {
+        mPageResolver = pageResolver;
+
+        requestLayout();
     }
 
     @Override
@@ -194,19 +204,24 @@ public class SequenceLayout extends ViewGroup implements Environment {
         requestLayout();
     }
 
-    public List<Sequence> addSequences(int sequencesResId) {
+    public List<Sequence> readSequences(int sequencesResId) {
         try {
             XmlResourceParser parser = getResources().getXml(sequencesResId);
-            List<Sequence> sequences = new SequenceReader(this).readSequences(parser);
 
-            addSequences(sequences);
-
-            return sequences;
+            return new SequenceReader(this).readSequences(parser);
         } catch (Exception e) {
             String resourceName = getResources().getResourceName(sequencesResId);
 
             throw new RuntimeException("Bad sequence file '" + resourceName + "'.", e);
         }
+    }
+
+    public List<Sequence> addSequences(int sequencesResId) {
+        List<Sequence> sequences = readSequences(sequencesResId);
+
+        addSequences(sequences);
+
+        return sequences;
     }
 
     public void addSequences(List<Sequence> sequences) {
@@ -293,6 +308,14 @@ public class SequenceLayout extends ViewGroup implements Environment {
         );
 
         view.layout(left, top, right, bottom);
+    }
+
+    public SequenceLayoutAnimatorCreator createLayoutAnimation() {
+        if (mPageResolver instanceof SequenceLayoutAnimatorCreator) {
+            throw new IllegalStateException("Can not animate the layout while it is in animation.");
+        }
+
+        return new SequenceLayoutAnimatorCreator(this);
     }
 
     private static int resolveViewId(String idName, Context context) {

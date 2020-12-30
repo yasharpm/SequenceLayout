@@ -34,4 +34,11 @@
         android:text="A list with sequence layouts as items"
         android:onClick="sample4"/>
 
+    <Button
+        android:id="@+id/button_animation1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Simple layout animation"
+        android:onClick="animation1"/>
+
 </com.yashoid.sequencelayout.SequenceLayout>

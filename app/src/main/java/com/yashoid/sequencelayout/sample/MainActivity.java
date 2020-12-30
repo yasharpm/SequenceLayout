@@ -29,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(ListActivity.getIntent(this));
     }
 
+    public void animation1(View v) {
+        startActivity(AnimationActivity.getIntent(this));
+    }
+
     private void startSampleActivity(int layoutResId) {
         startActivity(SampleActivity.getIntent(this, layoutResId));
     }

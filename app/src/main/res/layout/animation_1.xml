@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yashoid.sequencelayout.SequenceLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    tools:context=".AnimationActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    app:pageWidth="360"
+    app:pageHeight="540"
+    app:sequences="@xml/sequences_animation1">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+
+    <View
+        android:id="@+id/box_a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#0F0"/>
+
+    <View
+        android:id="@+id/box_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#F00"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Animate"
+        android:onClick="animate"/>
+
+</com.yashoid.sequencelayout.SequenceLayout>

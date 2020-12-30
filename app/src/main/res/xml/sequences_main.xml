@@ -11,6 +11,8 @@
         <Span id="button_sample3" size="wrap"/>
         <Span size="100%space"/>
         <Span id="button_sample4" size="wrap"/>
+        <Span size="100%space"/>
+        <Span id="button_animation1" size="wrap"/>
 
     </Vertical>
 
@@ -35,6 +37,12 @@
     <Horizontal>
         <Span size="16pw"/>
         <Span id="button_sample4" size="1w"/>
+        <Span size="16pw"/>
+    </Horizontal>
+
+    <Horizontal>
+        <Span size="16pw"/>
+        <Span id="button_animation1" size="1w"/>
         <Span size="16pw"/>
     </Horizontal>
 

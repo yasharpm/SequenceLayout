@@ -6,12 +6,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-class PageResolver implements SizeResolverHost {
+class PageResolver implements IPageResolver, SizeResolverHost {
 
     private static final int MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN = 20;
     private static final int MAXIMUM_EXPECTED_NUMBER_OF_SPANS = MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN * 3;
 
-    private final Environment mEnvironment;
+    private Environment mEnvironment;
 
     private float mPageWidth;
     private float mPageHeight;
@@ -33,6 +33,19 @@ class PageResolver implements SizeResolverHost {
     private int[] mSizeMap = new int[MAXIMUM_EXPECTED_NUMBER_OF_CHILDREN * 4];
 
     public PageResolver(Environment environment) {
+        mEnvironment = environment;
+    }
+
+    PageResolver makeClone() {
+        PageResolver clone = new PageResolver(mEnvironment);
+
+        clone.mSequences.addAll(mSequences);
+
+        return clone;
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
         mEnvironment = environment;
     }
 
@@ -79,19 +92,17 @@ class PageResolver implements SizeResolverHost {
         mEnvironment.measureElement(id, minWidth, maxWidth, minHeight, maxHeight, measuredSize);
     }
 
+    @Override
     public void onSequenceAdded(Sequence sequence) {
         mSequences.add(sequence);
-
-        mUnresolvedSpans.addAll(sequence.getSpans());
     }
 
+    @Override
     public void onSequenceRemoved(Sequence sequence) {
         mSequences.remove(sequence);
-
-        mResolvedSpans.removeAll(sequence.getSpans());
-        mUnresolvedSpans.removeAll(sequence.getSpans());
     }
 
+    @Override
     public Sequence findSequenceById(String id) {
         if (id == null) {
             return null;
@@ -106,6 +117,7 @@ class PageResolver implements SizeResolverHost {
         return null;
     }
 
+    @Override
     public void startResolution(int pageWidth, int pageHeight, boolean horizontalWrapping, boolean verticalWrapping) {
         mPageWidth = mEnvironment.getPageWidth();
         mPageHeight = mEnvironment.getPageHeight();
@@ -113,10 +125,14 @@ class PageResolver implements SizeResolverHost {
         mResolvingWidth = pageWidth;
         mResolvingHeight = pageHeight;
 
-        // Resolving visibility
-        mUnresolvedSpans.addAll(mResolvedSpans);
+        mUnresolvedSpans.clear();
         mResolvedSpans.clear();
 
+        for (Sequence sequence: mSequences) {
+            mUnresolvedSpans.addAll(sequence.getSpans());
+        }
+
+        // Resolving visibility
         int unresolvedSpanCount = mUnresolvedSpans.size();
 
         while (!mUnresolvedSpans.isEmpty()) {
@@ -207,6 +223,17 @@ class PageResolver implements SizeResolverHost {
         mResolvedHeight = maxHeight;
     }
 
+    @Override
+    public int getResolvedWidth() {
+        return mResolvedWidth;
+    }
+
+    @Override
+    public int getResolvedHeight() {
+        return mResolvedHeight;
+    }
+
+    @Override
     public void positionViews() {
         int elementCount = mEnvironment.getElementCount();
 
@@ -252,14 +279,6 @@ class PageResolver implements SizeResolverHost {
 
             mEnvironment.positionElement(id, mSizeMap[i * 4], mSizeMap[i * 4 + 1], mSizeMap[i * 4 + 2], mSizeMap[i * 4 + 3]);
         }
-    }
-
-    int getResolvedWidth() {
-        return mResolvedWidth;
-    }
-
-    int getResolvedHeight() {
-        return mResolvedHeight;
     }
 
     @Override

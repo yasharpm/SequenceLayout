@@ -4,11 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
-
-import com.yashoid.sequencelayout.SequenceLayout;
 
 public class SampleActivity extends AppCompatActivity {
 
@@ -31,24 +26,6 @@ public class SampleActivity extends AppCompatActivity {
         int layoutResId = intent.getIntExtra(EXTRA_LAYOUT_RES_ID, 0);
 
         setContentView(layoutResId);
-
-        SequenceLayout layout = null;
-
-        // TODO Animation
-
-        // This is for the future. Too much interpolator?
-//        layout.animate()
-//                .addSequences(R.xml.sequences_a).interpolator(new AccelerateInterpolator())
-//                .removeSequences(badSequences).interpolator(new DecelerateInterpolator())
-//                .addViews(R.layout.new_views).fadingIn()
-//                .removeViews(mViewA, mViewB).fadingOut()
-//                .duration(200)
-//                .interpolator(new LinearInterpolator())
-//                .next()
-//                .addSequences(R.xml.sequences_b)
-//                .removeSequences(R.xml.sequences_a)
-//                .duration(100)
-//                .start();
     }
 
 }

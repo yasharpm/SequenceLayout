@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sequences>
+
+    <Horizontal>
+        <Span size="16pw"/>
+        <Span id="text" size="1w"/>
+        <Span size="16pw"/>
+    </Horizontal>
+
+    <Horizontal>
+        <Span size="1w"/>
+        <Span id="box_a" size="36pw"/>
+        <Span size="8pw"/>
+        <Span id="button" size="wrap"/>
+        <Span size="8pw"/>
+        <Span id="box_b" size="36pw"/>
+        <Span size="1w"/>
+    </Horizontal>
+
+</Sequences>
