@@ -77,7 +77,8 @@ public class AnimationActivity extends AppCompatActivity {
 
         mAnimator = animatorCreator.create();
 
-        mAnimator.setDuration(1_200);
+
+        mAnimator.setDuration(1_000);
         mAnimator.setInterpolator(new OvershootInterpolator());
         mAnimator.start();
 

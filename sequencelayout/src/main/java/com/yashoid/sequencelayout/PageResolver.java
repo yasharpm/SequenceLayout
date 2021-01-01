@@ -217,6 +217,8 @@ class PageResolver implements IPageResolver, SizeResolverHost {
                 // We have an unresolvable situation here.
                 throw new RuntimeException("Sequences definitions are interrelated and unresolvable. Check 'mUnresolvedSpans' to investigate.");
             }
+
+            unresolvedSpanCount = remainingUnresolvedSpans;
         }
 
         mResolvedWidth = maxWidth;
@@ -252,16 +254,19 @@ class PageResolver implements IPageResolver, SizeResolverHost {
                 continue;
             }
 
-            int index = Arrays.binarySearch(mIdMap, 0, elementCount, unit.id);
+            int index = search(mIdMap, 0, elementCount, unit.id);
 
             if (index < 0) {
                 index = elementCount;
 
                 mIdMap[index] = unit.id;
 
-                elementCount++;
+                mSizeMap[index * 4] = 0;
+                mSizeMap[index * 4 + 1] = 0;
+                mSizeMap[index * 4 + 2] = 0;
+                mSizeMap[index * 4 + 3] = 0;
 
-                Arrays.sort(mIdMap, 0, elementCount);
+                elementCount++;
             }
 
             if (unit.isHorizontal) {
@@ -307,6 +312,20 @@ class PageResolver implements IPageResolver, SizeResolverHost {
     @Override
     public int getResolvingHeight() {
         return mResolvingHeight;
+    }
+
+    private static int search(String[] list, int fromIndex, int toIndex, String str) {
+        if (list == null || str == null) {
+            return -1;
+        }
+
+        for (int i = fromIndex; i < toIndex; i++) {
+            if (str.equals(list[i])) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
 }
