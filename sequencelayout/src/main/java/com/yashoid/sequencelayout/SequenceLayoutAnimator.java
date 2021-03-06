@@ -103,6 +103,35 @@ public class SequenceLayoutAnimator extends Animator implements Environment, IPa
         return mInterpolator;
     }
 
+    public float getPassedTimeFraction() {
+        return mPassedTimeFraction;
+    }
+
+    /**
+     * This method can only be used if the animation start call is not called yet.
+     * Interpolation is applied to fraction.
+     * You must call either end() or cancel() methods after the animator is no longer needed.
+     * @param fraction
+     */
+    public void setPassedTimeFraction(float fraction) {
+        fraction = Math.max(0, Math.min(1, fraction));
+
+        if (mStarted) {
+            throw new UnsupportedOperationException("Can not modify the animation after it has started.");
+        }
+
+        if (!mRunning) {
+            prepareToRun();
+
+            mNotifyHandler = new Handler(Looper.myLooper());
+        }
+
+        mPassedTimeFraction = fraction;
+        mApplicablePassedTimeFraction = mInterpolator.getInterpolation(mPassedTimeFraction);
+
+        positionViews();
+    }
+
     @Override
     public void start() {
         if (mStarted) {
@@ -142,7 +171,9 @@ public class SequenceLayoutAnimator extends Animator implements Environment, IPa
 
     @Override
     public void cancel() {
-        mCancelled = true;
+        if (mHasPendingFrameCall) {
+            mCancelled = true;
+        }
 
         attachStartResolverToLayout();
 
@@ -181,6 +212,8 @@ public class SequenceLayoutAnimator extends Animator implements Environment, IPa
     @Override
     public void doFrame(long frameTimeNanos) {
         if (mCancelled) {
+            mHasPendingFrameCall = false;
+            mCancelled = false;
             return;
         }
 
@@ -194,16 +227,8 @@ public class SequenceLayoutAnimator extends Animator implements Environment, IPa
         }
 
         if (!mRunning) {
-            ensureViewsAdded(mAddingViews);
-            ensureViewsAdded(mRemovingViews);
-
-            setSelfAsEnvironmentForResolvers();
-            resolveViewPositions();
-
-            attachSelfToLayout();
+            prepareToRun();
         }
-
-        mRunning = true;
 
         if (mLastFrameTimeNanos == -1) {
             mLastFrameTimeNanos = frameTimeNanos;
@@ -237,6 +262,18 @@ public class SequenceLayoutAnimator extends Animator implements Environment, IPa
         mHasPendingFrameCall = true;
     }
 
+    private void prepareToRun() {
+        ensureViewsAdded(mAddingViews);
+        ensureViewsAdded(mRemovingViews);
+
+        setSelfAsEnvironmentForResolvers();
+        resolveViewPositions();
+
+        attachSelfToLayout();
+
+        mRunning = true;
+    }
+
     private void setSelfAsEnvironmentForResolvers() {
         mStartResolver.setEnvironment(this);
         mEndResolver.setEnvironment(this);
@@ -259,6 +296,12 @@ public class SequenceLayoutAnimator extends Animator implements Environment, IPa
 
         mStartResolver.setEnvironment(mParent);
         mParent.setPageResolver(mStartResolver);
+
+        if (mRemovingViews != null) {
+            for (View view: mRemovingViews) {
+                view.setAlpha(1);
+            }
+        }
     }
 
     private void attachEndResolverToLayout() {
@@ -267,6 +310,12 @@ public class SequenceLayoutAnimator extends Animator implements Environment, IPa
 
         mEndResolver.setEnvironment(mParent);
         mParent.setPageResolver(mEndResolver);
+
+        if (mAddingViews != null) {
+            for (View view: mAddingViews) {
+                view.setAlpha(1);
+            }
+        }
     }
 
     private void ensureViewsAdded(List<View> views) {

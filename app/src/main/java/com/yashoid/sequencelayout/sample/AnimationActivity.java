@@ -1,5 +1,6 @@
 package com.yashoid.sequencelayout.sample;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,10 +13,11 @@ import com.yashoid.sequencelayout.SequenceLayoutAnimator;
 import com.yashoid.sequencelayout.SequenceLayoutAnimatorCreator;
 import com.yashoid.sequencelayout.Sequence;
 import com.yashoid.sequencelayout.SequenceLayout;
+import com.yashoid.sequencelayout.SwipeAnimator;
 
 import java.util.List;
 
-public class AnimationActivity extends AppCompatActivity {
+public class AnimationActivity extends AppCompatActivity implements Animator.AnimatorListener {
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, AnimationActivity.class);
@@ -33,7 +35,9 @@ public class AnimationActivity extends AppCompatActivity {
 
     private boolean mIsA = true;
 
-    private SequenceLayoutAnimator mAnimator = null;
+    private SequenceLayoutAnimator mNextAnimator = null;
+
+    private SwipeAnimator mSwipeAnimator = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,13 +55,16 @@ public class AnimationActivity extends AppCompatActivity {
         mSequencesB = mLayout.readSequences(R.xml.sequences_animation1_b);
 
         mLayout.addSequences(mSequencesA);
+
+        mSwipeAnimator = new SwipeAnimator(this);
+        mSwipeAnimator.setFullDistance(360 * getResources().getDisplayMetrics().density);
+
+        mLayout.setOnTouchListener(mSwipeAnimator);
+
+        prepareNextAnimator();
     }
 
-    public void animate(View v) {
-        if (mAnimator != null && mAnimator.isRunning()) {
-            return;
-        }
-
+    private void prepareNextAnimator() {
         SequenceLayoutAnimatorCreator animatorCreator = mLayout.createLayoutAnimation();
 
         if (mIsA) {
@@ -66,6 +73,8 @@ public class AnimationActivity extends AppCompatActivity {
                     .removeSequences(mSequencesA)
                     .addView(mBoxB)
                     .removeView(mBoxA);
+
+            mSwipeAnimator.setActiveDirection(90);
         }
         else {
             animatorCreator
@@ -73,16 +82,42 @@ public class AnimationActivity extends AppCompatActivity {
                     .removeSequences(mSequencesB)
                     .addView(mBoxA)
                     .removeView(mBoxB);
+
+            mSwipeAnimator.setActiveDirection(-90);
         }
 
-        mAnimator = animatorCreator.create();
+        mNextAnimator = animatorCreator.create();
 
+        mNextAnimator.setDuration(1_000);
+        mNextAnimator.setInterpolator(new OvershootInterpolator());
 
-        mAnimator.setDuration(1_000);
-        mAnimator.setInterpolator(new OvershootInterpolator());
-        mAnimator.start();
+        mSwipeAnimator.setAnimator(mNextAnimator);
 
-        mIsA = !mIsA;
+        mNextAnimator.addListener(this);
     }
+
+    public void animate(View v) {
+        if (mNextAnimator.isRunning() || mSwipeAnimator.getState() != SwipeAnimator.STATE_IDLE) {
+            return;
+        }
+
+        mNextAnimator.start();
+    }
+
+    @Override
+    public void onAnimationEnd(Animator animation) {
+        mIsA = !mIsA;
+
+        prepareNextAnimator();
+    }
+
+    @Override
+    public void onAnimationStart(Animator animation) { }
+
+    @Override
+    public void onAnimationCancel(Animator animation) { }
+
+    @Override
+    public void onAnimationRepeat(Animator animation) { }
 
 }

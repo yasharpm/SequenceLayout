@@ -15,7 +15,7 @@ The following animations display the extend of the flexibily available.
 Add the dependency:
 ```Groovy
 dependencies {
-	implementation 'com.yashoid:sequencelayout:1.4.0'
+	implementation 'com.yashoid:sequencelayout:2.0.0'
 }
 ```
 

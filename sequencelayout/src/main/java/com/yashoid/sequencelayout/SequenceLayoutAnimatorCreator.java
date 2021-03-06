@@ -25,7 +25,7 @@ public class SequenceLayoutAnimatorCreator {
             throw new UnsupportedOperationException("Layout is already in animation.");
         }
 
-        mStartResolver = (PageResolver) pageResolver;
+        mStartResolver = ((PageResolver) pageResolver).makeClone();
         mEndResolver = mStartResolver.makeClone();
     }
 
